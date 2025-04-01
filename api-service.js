@@ -63,13 +63,14 @@ class ApiService {
      * Reframe a problem with AI assistance
      * @param {string} problem - The original problem
      * @param {string} domain - The problem domain
+     * @param {string} context - Additional context (optional)
      * @returns {Promise<Array>} - Array of reframed problem statements
      */
-    async reframeProblem(problem, domain) {
+    async reframeProblem(problem, domain, context = '') {
         // Ensure config is loaded
         await this.configPromise;
         
-        const prompt = this._buildReframingPrompt(problem, domain);
+        const prompt = this._buildReframingPrompt(problem, domain, context);
         
         try {
             const response = await this._callOpenAI(prompt);
@@ -203,19 +204,22 @@ Be creative, practical, and ensure the solutions are genuinely useful for solvin
      * Build prompt for problem reframing
      * @param {string} problem - The problem description
      * @param {string} domain - The problem domain
+     * @param {string} context - Additional context
      * @returns {string} - Formatted prompt
      * @private
      */
-    _buildReframingPrompt(problem, domain) {
+    _buildReframingPrompt(problem, domain, context = '') {
         return `Reframe the following problem in 3 different innovative ways to help uncover new perspectives and solutions:
 
 Problem: "${problem}"
 Domain: ${domain}
+${context ? `Additional Context: ${context}` : ''}
 
 For each reframing:
 1. Use a different cognitive technique (e.g., inverse thinking, first principles, analogy, constraint addition/removal)
 2. Make sure the reframing opens up new solution spaces or angles
 3. Keep the reframing concise but insightful (1-2 sentences)
+4. Consider the additional context provided, if any
 
 Return the reframings as an array of strings in JSON format:
 ["Reframing 1", "Reframing 2", "Reframing 3"]

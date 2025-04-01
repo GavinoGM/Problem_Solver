@@ -330,6 +330,11 @@
                 contextCheckbox.addEventListener('change', toggleContext);
                 contextToggle.addEventListener('click', toggleContextClick);
                 
+                // Toggle extra input fields
+                document.querySelectorAll('.toggle-extra-input').forEach(btn => {
+                    btn.addEventListener('click', toggleExtraInput);
+                });
+                
                 // Buttons
                 analyzeBtn.addEventListener('click', analyzeProblem);
                 reframeBtn.addEventListener('click', reframeProblem);
@@ -381,6 +386,30 @@
                 contextCheckbox.checked = !contextCheckbox.checked;
                 contextSection.classList.toggle('hidden', !contextCheckbox.checked);
                 contextToggle.textContent = contextCheckbox.checked ? '(hide)' : '(show)';
+            }
+            
+            // Toggle extra input fields (stakeholders, root causes, impact)
+            function toggleExtraInput(e) {
+                const targetId = e.currentTarget.dataset.target;
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    // Toggle visibility
+                    const isHidden = targetElement.classList.contains('hidden');
+                    targetElement.classList.toggle('hidden', !isHidden);
+                    
+                    // Toggle icon
+                    const iconElement = e.currentTarget.querySelector('i');
+                    if (iconElement) {
+                        if (isHidden) {
+                            iconElement.classList.remove('fa-chevron-down');
+                            iconElement.classList.add('fa-chevron-up');
+                        } else {
+                            iconElement.classList.remove('fa-chevron-up');
+                            iconElement.classList.add('fa-chevron-down');
+                        }
+                    }
+                }
             }
 
             // Analyze the problem
@@ -482,28 +511,58 @@
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Stakeholders Card -->
                             <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                <div class="flex items-center mb-2">
-                                    <i class="fas fa-users text-blue-500 mr-2"></i>
-                                    <p class="text-sm font-medium text-blue-700">STAKEHOLDERS</p>
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-users text-blue-500 mr-2"></i>
+                                        <p class="text-sm font-medium text-blue-700">STAKEHOLDERS</p>
+                                    </div>
+                                    <button class="toggle-extra-input text-xs text-blue-600 hover:text-blue-800" data-target="stakeholdersInput">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
                                 </div>
-                                <p class="text-sm text-gray-700">Identify all parties affected by or involved in this problem</p>
+                                <p class="text-sm text-gray-700 mb-2">Identify all parties affected by or involved in this problem</p>
+                                <div id="stakeholdersInput" class="hidden mt-3">
+                                    <textarea id="stakeholders" class="w-full px-3 py-2 text-sm border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" 
+                                        rows="2" placeholder="List key stakeholders affected by this problem..."></textarea>
+                                </div>
                             </div>
                             
+                            <!-- Root Analysis Card -->
                             <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
-                                <div class="flex items-center mb-2">
-                                    <i class="fas fa-search text-yellow-500 mr-2"></i>
-                                    <p class="text-sm font-medium text-yellow-700">ROOT ANALYSIS</p>
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-search text-yellow-500 mr-2"></i>
+                                        <p class="text-sm font-medium text-yellow-700">ROOT ANALYSIS</p>
+                                    </div>
+                                    <button class="toggle-extra-input text-xs text-yellow-600 hover:text-yellow-800" data-target="rootCausesInput">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
                                 </div>
-                                <p class="text-sm text-gray-700">Potential underlying causes contributing to this challenge</p>
+                                <p class="text-sm text-gray-700 mb-2">Potential underlying causes contributing to this challenge</p>
+                                <div id="rootCausesInput" class="hidden mt-3">
+                                    <textarea id="rootCauses" class="w-full px-3 py-2 text-sm border border-yellow-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 resize-none" 
+                                        rows="2" placeholder="What might be causing this problem..."></textarea>
+                                </div>
                             </div>
                             
+                            <!-- Impact Assessment Card -->
                             <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
-                                <div class="flex items-center mb-2">
-                                    <i class="fas fa-chart-pie text-purple-500 mr-2"></i>
-                                    <p class="text-sm font-medium text-purple-700">IMPACT ASSESSMENT</p>
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-chart-pie text-purple-500 mr-2"></i>
+                                        <p class="text-sm font-medium text-purple-700">IMPACT ASSESSMENT</p>
+                                    </div>
+                                    <button class="toggle-extra-input text-xs text-purple-600 hover:text-purple-800" data-target="impactAssessmentInput">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
                                 </div>
-                                <p class="text-sm text-gray-700">How this problem affects different aspects of your situation</p>
+                                <p class="text-sm text-gray-700 mb-2">How this problem affects different aspects of your situation</p>
+                                <div id="impactAssessmentInput" class="hidden mt-3">
+                                    <textarea id="impactAssessment" class="w-full px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none" 
+                                        rows="2" placeholder="Describe the impacts of this problem..."></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -829,8 +888,26 @@
                 `;
                 
                 try {
-                    // Call API to reframe the problem
-                    const reframes = await apiService.reframeProblem(currentProblem, currentDomain);
+                    // Get additional context and optional inputs if provided
+                    const contextText = contextCheckbox.checked ? contextInput.value.trim() : '';
+                    const stakeholdersText = document.getElementById('stakeholders').value.trim();
+                    const rootCausesText = document.getElementById('rootCauses').value.trim();
+                    const impactText = document.getElementById('impactAssessment').value.trim();
+                    
+                    // Build structured context
+                    let structuredContext = contextText;
+                    if (stakeholdersText) {
+                        structuredContext += `\n\nStakeholders: ${stakeholdersText}`;
+                    }
+                    if (rootCausesText) {
+                        structuredContext += `\n\nPotential Root Causes: ${rootCausesText}`;
+                    }
+                    if (impactText) {
+                        structuredContext += `\n\nImpact Assessment: ${impactText}`;
+                    }
+                    
+                    // Call API to reframe the problem with enhanced context
+                    const reframes = await apiService.reframeProblem(currentProblem, currentDomain, structuredContext);
                     
                     reframeResults.innerHTML = `
                         <div class="space-y-4">
