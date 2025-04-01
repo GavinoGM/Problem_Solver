@@ -441,6 +441,13 @@
                 // Display problem breakdown
                 displayProblemBreakdown(currentProblem, currentDomain);
                 
+                // Add event listeners to the toggle buttons after the problem breakdown is displayed
+                setTimeout(() => {
+                    document.querySelectorAll('.toggle-extra-input').forEach(btn => {
+                        btn.addEventListener('click', toggleExtraInput);
+                    });
+                }, 100);
+                
                 // Generate initial solutions
                 try {
                     await generateInitialSolutions();
@@ -890,9 +897,15 @@
                 try {
                     // Get additional context and optional inputs if provided
                     const contextText = contextCheckbox.checked ? contextInput.value.trim() : '';
-                    const stakeholdersText = document.getElementById('stakeholders').value.trim();
-                    const rootCausesText = document.getElementById('rootCauses').value.trim();
-                    const impactText = document.getElementById('impactAssessment').value.trim();
+                    
+                    // Safely get values from optional fields
+                    const stakeholdersInput = document.getElementById('stakeholders');
+                    const rootCausesInput = document.getElementById('rootCauses');
+                    const impactInput = document.getElementById('impactAssessment');
+                    
+                    const stakeholdersText = stakeholdersInput ? stakeholdersInput.value.trim() : '';
+                    const rootCausesText = rootCausesInput ? rootCausesInput.value.trim() : '';
+                    const impactText = impactInput ? impactInput.value.trim() : '';
                     
                     // Build structured context
                     let structuredContext = contextText;
