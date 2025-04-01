@@ -24,9 +24,34 @@ body {
 }
 
 .card-glow {
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.15);
+    backdrop-filter: blur(12px);
     transition: all 0.3s ease;
+    position: relative;
+}
+
+.card-glow::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(45deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+textarea, input, select {
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+}
+
+label {
+    font-size: 18px !important;
+    margin-bottom: 8px !important;
 }
 
 .card-glow:hover {
