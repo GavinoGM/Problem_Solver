@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Solver | AI-Powered Problem Solving</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .glow-btn {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+        .solution-card {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .solution-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .ai-float {
+            position: absolute;
+            right: 0;
+            top: 0;
+            transform: translate(30%, -30%) rotate(15deg);
+            opacity: 0.2;
+            font-size: 6rem;
+            z-index: 0;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-indigo-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <header class="text-center mb-10">
+            <h1 class="text-5xl font-bold text-gray-800 mb-3 tracking-tight">Smart<span class="text-indigo-600">Solver</span></h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Harness human frameworks and AI intelligence to solve any challenge</p>
+        </header>
+
+        <!-- AI Mode Toggle -->
+        <div class="flex justify-center mb-10">
+            <div class="bg-white rounded-full shadow-md p-1 inline-flex border border-gray-200">
+                <button id="fixedModeBtn" class="px-6 py-2 rounded-full font-medium bg-indigo-600 text-white transition-all duration-300">
+                    <i class="fas fa-box mr-2"></i> Framework Mode
+                </button>
+                <button id="aiModeBtn" class="px-6 py-2 rounded-full font-medium bg-white text-gray-600 hover:text-gray-800 transition-all duration-300">
+                    <i class="fas fa-robot mr-2"></i> AI Creative Mode
+                </button>
+            </div>
+        </div>
+
+        <!-- Problem Input Section -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-gray-100 relative overflow-hidden">
+            <div class="ai-float text-indigo-200">
+                <i class="fas fa-brain"></i>
+            </div>
+            <div class="relative z-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-5 flex items-center">
+                    <i class="fas fa-puzzle-piece text-indigo-500 mr-3"></i>
+                    Define Your Challenge
+                </h2>
+                
+                <div class="flex flex-col md:flex-row gap-5 mb-6">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">What problem are you trying to solve?</label>
+                        <textarea id="problemInput" rows="3" placeholder="Describe your challenge in detail... (e.g., 'Our customer retention rate dropped by 20% last quarter')" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm resize-none"></textarea>
+                    </div>
+                    <div class="w-full md:w-64">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Problem Domain</label>
+                        <select id="domainSelect" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                            <option value="general">General Problem</option>
+                            <option value="product">Product/Service</option>
+                            <option value="tech">Technology</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="business">Business Strategy</option>
+                            <option value="team">Team/Organization</option>
+                            <option value="personal">Personal Growth</option>
+                        </select>
+
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Complexity Level</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="range" id="complexityRange" min="1" max="5" value="3" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                <span id="complexityValue" class="text-sm font-medium text-gray-600">3/5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="contextCheckbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <label for="contextCheckbox" class="ml-2 text-sm text-gray-600">
+                            Include additional context <span id="contextToggle" class="text-indigo-600 cursor-pointer">(show)</span>
+                        </label>
+                    </div>
+                    <button id="analyzeBtn" class="glow-btn bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-8 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg flex items-center">
+                        <i class="fas fa-analytics mr-2"></i> Analyze Problem
+                    </button>
+                </div>
+
+                <div id="contextSection" class="mt-4 hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Additional Context</label>
+                    <textarea id="contextInput" rows="2" placeholder="Any additional constraints, background information, or specific needs..." 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm resize-none"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Problem Insights Section -->
+        <div id="problemSection" class="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-gray-100 hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fas fa-lightbulb text-yellow-500 mr-3"></i>
+                Problem Insights
+            </h2>
+            
+            <div id="problemBreakdown" class="space-y-4">
+                <!-- Content will be loaded here -->
+            </div>
+
+            <div id="aiReframingSection" class="mt-6 pt-6 border-t border-gray-200 hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-atom text-indigo-500 mr-2"></i>
+                        AI-Powered Problem Reframing
+                    </h3>
+                    <button id="reframeBtn" class="text-sm bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1 rounded-full transition">
+                        <i class="fas fa-sync-alt mr-1"></i> Reframe
+                    </button>
+                </div>
+                
+                <div id="reframeResults" class="bg-indigo-50 rounded-lg p-4 min-h-20 text-gray-700">
+                    <p class="text-center text-gray-400 py-4">
+                        Click "Reframe" to see alternative problem statements generated by AI
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Solutions Section -->
+        <div id="solutionsSection" class="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-gray-100 hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-magic text-purple-500 mr-3"></i>
+                    Potential Solutions
+                </h2>
+                
+                <div class="flex items-center mt-3 md:mt-0">
+                    <span id="solutionCounter" class="text-sm text-gray-500 mr-3">0 solutions explored</span>
+                    <div class="w-24 bg-gray-200 rounded-full h-2.5">
+                        <div id="solutionProgress" class="bg-indigo-600 h-2.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Solutions Toggle -->
+            <div class="flex mb-6 border-b border-gray-200">
+                <button id="structuredSolutionsTab" class="px-4 py-2 font-medium border-b-2 border-indigo-500 text-indigo-600">
+                    <i class="fas fa-layer-group mr-2"></i> Structured Approaches
+                </button>
+                <button id="aiSolutionsTab" class="px-4 py-2 font-medium text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-robot mr-2"></i> AI-Generated Ideas
+                </button>
+            </div>
+            
+            <!-- Solutions Container -->
+            <div id="solutionDirections" class="grid grid-cols-1 md:grid-cols-2 gap-5 min-h-48">
+                <div class="md:col-span-2 flex flex-col items-center justify-center py-10 text-gray-400">
+                    <i class="fas fa-sparkles text-4xl mb-3"></i>
+                    <p>Solutions will appear here after problem analysis</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex flex-col sm:flex-row justify-between gap-3">
+                <div>
+                    <button id="saveSolutionsBtn" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg flex items-center">
+                        <i class="fas fa-bookmark mr-2"></i> Save Solutions
+                    </button>
+                </div>
+                <div class="flex gap-3">
+                    <button id="regenerateBtn" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-medium py-2 px-4 rounded-lg flex items-center">
+                        <i class="fas fa-random mr-2"></i> Shuffle
+                    </button>
+                    <button id="generateSolutionsBtn" class="glow-btn bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-lg flex items-center">
+                        <i class="fas fa-plus mr-2"></i> Generate More
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Solution Details Modal -->
+        <div id="solutionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden relative">
+                <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+                
+                <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 60px)">
+                    <div id="modalContent">
+                        <!-- Content will be loaded here -->
+                    </div>
+                    
+                    <div id="aiEnhanceSection" class="mt-6 pt-6 border-t border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-800 mb-3">Enhance with AI</h3>
+                        <div class="flex gap-3 mb-3">
+                            <button class="ai-enhance-btn bg-white border border-indigo-100 text-indigo-600 text-sm py-1 px-3 rounded-full hover:bg-indigo-50 transition" data-prompt="Elaborate">
+                                <i class="fas fa-expand mr-1"></i> Elaborate
+                            </button>
+                            <button class="ai-enhance-btn bg-white border border-indigo-100 text-indigo-600 text-sm py-1 px-3 rounded-full hover:bg-indigo-50 transition" data-prompt="Give examples">
+                                <i class="fas fa-list-ul mr-1"></i> Examples
+                            </button>
+                            <button class="ai-enhance-btn bg-white border border-indigo-100 text-indigo-600 text-sm py-1 px-3 rounded-full hover:bg-indigo-50 transition" data-prompt="Create action steps">
+                                <i class="fas fa-tasks mr-1"></i> Action Plan
+                            </button>
+                            <button class="ai-enhance-btn bg-white border border-indigo-100 text-indigo-600 text-sm py-1 px-3 rounded-full hover:bg-indigo-50 transition" data-prompt="Suggest metrics">
+                                <i class="fas fa-chart-line mr-1"></i> Metrics
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="customAiPrompt" placeholder="Or request custom enhancement..." class="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                            <button id="sendCustomPrompt" class="absolute right-2 top-2 text-indigo-500 hover:text-indigo-700">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 px-6 py-3 flex justify-between items-center border-t border-gray-200">
+                    <div class="flex items-center space-x-3">
+                        <button id="prevSolutionBtn" class="text-gray-600 hover:text-indigo-600 disabled:text-gray-300">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <span id="solutionNav" class="text-sm text-gray-500">1 of 4</span>
+                        <button id="nextSolutionBtn" class="text-gray-600 hover:text-indigo-600">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <button id="exportSolutionBtn" class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center">
+                        <i class="fas fa-file-export mr-2"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import apiService from './api-service.js';
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const problemInput = document.getElementById('problemInput');
+            const domainSelect = document.getElementById('domainSelect');
+            const complexityRange = document.getElementById('complexityRange');
+            const complexityValue = document.getElementById('complexityValue');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const contextCheckbox = document.getElementById('contextCheckbox');
+            const contextToggle = document.getElementById('contextToggle');
+            const contextSection = document.getElementById('contextSection');
+            const contextInput = document.getElementById('contextInput');
+            const problemSection = document.getElementById('problemSection');
+            const problemBreakdown = document.getElementById('problemBreakdown');
+            const aiReframingSection = document.getElementById('aiReframingSection');
+            const reframeBtn = document.getElementById('reframeBtn');
+            const reframeResults = document.getElementById('reframeResults');
+            const solutionsSection = document.getElementById('solutionsSection');
+            const solutionDirections = document.getElementById('solutionDirections');
+            const solutionCounter = document.getElementById('solutionCounter');
+            const solutionProgress = document.getElementById('solutionProgress');
+            const structuredSolutionsTab = document.getElementById('structuredSolutionsTab');
+            const aiSolutionsTab = document.getElementById('aiSolutionsTab');
+            const generateSolutionsBtn = document.getElementById('generateSolutionsBtn');
+            const regenerateBtn = document.getElementById('regenerateBtn');
+            const saveSolutionsBtn = document.getElementById('saveSolutionsBtn');
+            const solutionModal = document.getElementById('solutionModal');
+            const modalContent = document.getElementById('modalContent');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const prevSolutionBtn = document.getElementById('prevSolutionBtn');
+            const nextSolutionBtn = document.getElementById('nextSolutionBtn');
+            const solutionNav = document.getElementById('solutionNav');
+            const exportSolutionBtn = document.getElementById('exportSolutionBtn');
+            const aiEnhanceButtons = document.querySelectorAll('.ai-enhance-btn');
+            const customAiPrompt = document.getElementById('customAiPrompt');
+            const sendCustomPrompt = document.getElementById('sendCustomPrompt');
+            const fixedModeBtn = document.getElementById('fixedModeBtn');
+            const aiModeBtn = document.getElementById('aiModeBtn');
+
+            // State variables
+            let currentProblem = '';
+            let currentDomain = 'general';
+            let currentComplexity = 3;
+            let currentSolutions = [];
+            let displayedSolutions = [];
+            let usedSolutionTitles = [];
+            let allDomainSolutions = [];
+            let currentSolutionIndex = 0;
+            let currentOpenSolution = null;
+            let isAIMode = false;
+            
+            // Error handling function
+            function handleApiError(error, fallbackAction) {
+                console.error('API Error:', error);
+                alert('There was an error connecting to the AI service. Falling back to built-in solutions.');
+                fallbackAction();
+            }
+
+            // Initialize event listeners
+            function initialize() {
+                // Input handling
+                complexityRange.addEventListener('input', updateComplexity);
+                contextCheckbox.addEventListener('change', toggleContext);
+                contextToggle.addEventListener('click', toggleContextClick);
+                
+                // Buttons
+                analyzeBtn.addEventListener('click', analyzeProblem);
+                reframeBtn.addEventListener('click', reframeProblem);
+                generateSolutionsBtn.addEventListener('click', generateMoreSolutions);
+                regenerateBtn.addEventListener('click', shuffleSolutions);
+                saveSolutionsBtn.addEventListener('click', saveSolutions);
+                
+                // Solution tabs
+                structuredSolutionsTab.addEventListener('click', showStructuredSolutions);
+                aiSolutionsTab.addEventListener('click', showAISolutions);
+                
+                // Modal interactions
+                closeModalBtn.addEventListener('click', closeSolutionModal);
+                prevSolutionBtn.addEventListener('click', showPrevSolution);
+                nextSolutionBtn.addEventListener('click', showNextSolution);
+                exportSolutionBtn.addEventListener('click', exportSolution);
+                
+                // AI enhancement
+                aiEnhanceButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => enhanceWithAI(e.target.dataset.prompt));
+                });
+                sendCustomPrompt.addEventListener('click', sendCustomAIRequest);
+                customAiPrompt.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') sendCustomAIRequest();
+                });
+                
+                // Mode toggle
+                fixedModeBtn.addEventListener('click', () => toggleMode(false));
+                aiModeBtn.addEventListener('click', () => toggleMode(true));
+            }
+
+            // Toggle between fixed and AI mode
+            function toggleMode(aiEnabled) {
+                isAIMode = aiEnabled;
+                
+                if (aiEnabled) {
+                    fixedModeBtn.classList.remove('bg-indigo-600', 'text-white');
+                    fixedModeBtn.classList.add('bg-white', 'text-gray-600');
+                    aiModeBtn.classList.remove('bg-white', 'text-gray-600');
+                    aiModeBtn.classList.add('bg-indigo-600', 'text-white');
+                    reframeBtn.disabled = false;
+                    aiReframingSection.classList.remove('hidden');
+                } else {
+                    fixedModeBtn.classList.add('bg-indigo-600', 'text-white');
+                    fixedModeBtn.classList.remove('bg-white', 'text-gray-600');
+                    aiModeBtn.classList.add('bg-white', 'text-gray-600');
+                    aiModeBtn.classList.remove('bg-indigo-600', 'text-white');
+                    reframeBtn.disabled = true;
+                    aiReframingSection.classList.add('hidden');
+                }
+            }
+
+            // Update complexity value display
+            function updateComplexity() {
+                currentComplexity = complexityRange.value;
+                complexityValue.textContent = `${currentComplexity}/5`;
+            }
+
+            // Toggle context section
+            function toggleContext() {
+                contextSection.classList.toggle('hidden', !contextCheckbox.checked);
+            }
+
+            function toggleContextClick(e) {
+                e.preventDefault();
+                contextCheckbox.checked = !contextCheckbox.checked;
+                contextSection.classList.toggle('hidden', !contextCheckbox.checked);
+                contextToggle.textContent = contextCheckbox.checked ? '(hide)' : '(show)';
+            }
+
+            // Analyze the problem
+            async function analyzeProblem() {
+                currentProblem = problemInput.value.trim();
+                currentDomain = domainSelect.value;
+                currentComplexity = complexityRange.value;
+                
+                if (!currentProblem) {
+                    alert('Please describe your problem to analyze');
+                    return;
+                }
+                
+                // Show loading state
+                analyzeBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Analyzing...';
+                analyzeBtn.disabled = true;
+                
+                // Show problem section
+                problemSection.classList.remove('hidden');
+                problemBreakdown.innerHTML = `
+                    <div class="p-4 bg-gray-50 rounded-lg text-center text-gray-500">
+                        <i class="fas fa-circle-notch fa-spin mr-2"></i> Analyzing your problem...
+                    </div>
+                `;
+                
+                // Hide solutions section temporarily
+                solutionsSection.classList.add('hidden');
+                
+                // Display problem breakdown
+                displayProblemBreakdown(currentProblem, currentDomain);
+                
+                // Generate initial solutions
+                try {
+                    await generateInitialSolutions();
+                    
+                    // Show AI reframing section if in AI mode
+                    if (isAIMode) {
+                        aiReframingSection.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    handleApiError(error, () => {
+                        // Fall back to local solution generation
+                        isAIMode = false;
+                        toggleMode(false);
+                        currentSolutions = generateFrameworkSolutions(currentDomain);
+                        displayedSolutions = [...currentSolutions];
+                        updateSolutionDisplay();
+                        updateSolutionCounter();
+                    });
+                } finally {
+                    // Reset button state
+                    analyzeBtn.innerHTML = '<i class="fas fa-analytics mr-2"></i> Analyze Problem';
+                    analyzeBtn.disabled = false;
+                    
+                    // Show solutions section
+                    solutionsSection.classList.remove('hidden');
+                }
+            }
+
+            // Display problem breakdown
+            function displayProblemBreakdown(problem, domain) {
+                const domains = {
+                    general: 'General Problem',
+                    product: 'Product/Service Challenge',
+                    tech: 'Technical Challenge',
+                    marketing: 'Marketing Challenge',
+                    business: 'Business Strategy',
+                    team: 'Team/Organization Challenge',
+                    personal: 'Personal Challenge'
+                };
+                
+                const domainName = domains[domain] || 'General Problem';
+                const domainIcon = {
+                    general: 'fas fa-globe',
+                    product: 'fas fa-box-open',
+                    tech: 'fas fa-microchip',
+                    marketing: 'fas fa-bullhorn',
+                    business: 'fas fa-chart-line',
+                    team: 'fas fa-users',
+                    personal: 'fas fa-user'
+                }[domain] || 'fas fa-globe';
+                
+                problemBreakdown.innerHTML = `
+                    <div class="fade-in">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Problem Definition</h3>
+                            <span class="px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 flex items-center">
+                                <i class="${domainIcon} mr-1"></i>
+                                ${domainName}
+                            </span>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 border border-gray-200">
+                            <p class="text-gray-700 font-medium">"${problem}"</p>
+                            ${contextCheckbox.checked && contextInput.value ? `
+                                <div class="mt-3 pt-3 border-t border-gray-200">
+                                    <p class="text-xs text-gray-500 font-medium mb-1">CONTEXT</p>
+                                    <p class="text-gray-600 text-sm">${contextInput.value}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-users text-blue-500 mr-2"></i>
+                                    <p class="text-sm font-medium text-blue-700">STAKEHOLDERS</p>
+                                </div>
+                                <p class="text-sm text-gray-700">Identify all parties affected by or involved in this problem</p>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-search text-yellow-500 mr-2"></i>
+                                    <p class="text-sm font-medium text-yellow-700">ROOT ANALYSIS</p>
+                                </div>
+                                <p class="text-sm text-gray-700">Potential underlying causes contributing to this challenge</p>
+                            </div>
+                            
+                            <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-chart-pie text-purple-500 mr-2"></i>
+                                    <p class="text-sm font-medium text-purple-700">IMPACT ASSESSMENT</p>
+                                </div>
+                                <p class="text-sm text-gray-700">How this problem affects different aspects of your situation</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Generate initial solutions
+            async function generateInitialSolutions() {
+                if (isAIMode) {
+                    try {
+                        const contextText = contextCheckbox.checked ? contextInput.value.trim() : '';
+                        currentSolutions = await generateAISolutions(currentProblem, currentDomain, currentComplexity, contextText);
+                    } catch (error) {
+                        console.error('Error generating AI solutions:', error);
+                        throw error; // Re-throw to be handled by the caller
+                    }
+                } else {
+                    currentSolutions = generateFrameworkSolutions(currentDomain);
+                }
+                
+                usedSolutionTitles = currentSolutions.map(s => s.title);
+                
+                // Reset displayed solutions
+                displayedSolutions = [...currentSolutions];
+                
+                // Update UI
+                updateSolutionDisplay();
+                updateSolutionCounter();
+            }
+
+            // Generate framework-based solutions
+            function generateFrameworkSolutions(domain) {
+                const solutionTemplates = {
+                    general: [
+                        {
+                            icon: 'fas fa-crosshairs',
+                            title: 'Goal Clarification',
+                            description: 'Clearly define success criteria and measurable objectives.',
+                            framework: 'SMART Goals',
+                            steps: [
+                                'Define Specific objectives',
+                                'Establish Measurable metrics',
+                                'Ensure goals are Actionable',
+                                'Keep Relevant to core problem',
+                                'Set Time-bound milestones'
+                            ]
+                        },
+                        {
+                            icon: 'fas fa-project-diagram',
+                            title: 'Systems Mapping',
+                            description: 'Visualize relationships between components of the system.',
+                            framework: 'Systems Thinking',
+                            steps: [
+                                'Identify all system elements',
+                                'Map connections between elements',
+                                'Analyze feedback loops',
+                                'Identify leverage points',
+                                'Test interventions'
+                            ]
+                        },
+                        {
+                            icon: 'fas fa-chess',
+                            title: 'Scenario Planning',
+                            description: 'Explore different future scenarios to anticipate challenges.',
+                            framework: 'Scenario Analysis',
+                            steps: [
+                                'Identify key uncertainties',
+                                'Define axes of difference',
+                                'Develop 2-4 scenarios',
+                                'Analyze implications',
+                                'Develop contingency plans'
+                            ]
+                        }
+                    ],
+                    product: [
+                        {
+                            icon: 'fas fa-user-check',
+                            title: 'User Journey Audit',
+                            description: 'Examine all touchpoints in the customer experience.',
+                            framework: 'UX Mapping',
+                            steps: [
+                                'Map current user journey',
+                                'Identify pain points',
+                                'Highlight moments of delight',
+                                'Prioritize improvement areas',
+                                'Prototype solutions'
+                            ]
+                        },
+                        {
+                            icon: 'fas fa-bezier-curve',
+                            title: 'Feature Prioritization',
+                            description: 'Systematically evaluate which features to build next.',
+                            framework: 'RICE Scoring',
+                            steps: [
+                                'Calculate Reach of feature',
+                                'Estimate Impact',
+                                'Assess Confidence level',
+                                'Calculate Effort required',
+                                'Score and prioritize'
+                            ]
+                        }
+                    ],
+                    marketing: [
+                        {
+                            icon: 'fas fa-funnel-dollar',
+                            title: 'Conversion Funnel Analysis',
+                            description: 'Optimize each stage of the customer acquisition journey.',
+                            framework: 'AIDA Model',
+                            steps: [
+                                'Analyze Awareness metrics',
+                                'Improve Interest generation',
+                                'Boost Desire factors',
+                                'Remove Action barriers',
+                                'Test and iterate'
+                            ]
+                        }
+                    ],
+                    tech: [
+                        {
+                            icon: 'fas fa-code-branch',
+                            title: 'Technical Debt Assessment',
+                            description: 'Identify and prioritize technical debt in your systems.',
+                            framework: 'Tech Debt Quadrant',
+                            steps: [
+                                'Catalog existing technical debt',
+                                'Classify by impact and effort',
+                                'Assess risk and urgency',
+                                'Create remediation plan',
+                                'Implement prevention measures'
+                            ]
+                        },
+                        {
+                            icon: 'fas fa-sitemap',
+                            title: 'Architecture Review',
+                            description: 'Evaluate your current technical architecture against requirements.',
+                            framework: 'C4 Model',
+                            steps: [
+                                'Document context diagram',
+                                'Map container relationships',
+                                'Analyze component structures',
+                                'Identify architectural smells',
+                                'Define evolution strategy'
+                            ]
+                        }
+                    ],
+                    business: [
+                        {
+                            icon: 'fas fa-chart-line',
+                            title: 'Business Model Canvas',
+                            description: 'Analyze and visualize your current business model.',
+                            framework: 'BMC Framework',
+                            steps: [
+                                'Define value propositions',
+                                'Identify key activities and resources',
+                                'Map customer segments and relationships',
+                                'Analyze revenue streams and cost structure',
+                                'Identify improvement opportunities'
+                            ]
+                        },
+                        {
+                            icon: 'fas fa-balance-scale',
+                            title: 'Competitive Analysis',
+                            description: 'Systematically assess your position against competitors.',
+                            framework: 'Porter\'s Five Forces',
+                            steps: [
+                                'Analyze supplier power',
+                                'Evaluate buyer power',
+                                'Assess threat of new entrants',
+                                'Review threat of substitution',
+                                'Map competitive rivalry'
+                            ]
+                        }
+                    ],
+                    team: [
+                        {
+                            icon: 'fas fa-users-cog',
+                            title: 'Team Dynamics Assessment',
+                            description: 'Analyze team health and collaboration patterns.',
+                            framework: 'Team Topologies',
+                            steps: [
+                                'Map current team structures',
+                                'Identify communication patterns',
+                                'Assess team cognitive load',
+                                'Analyze delivery bottlenecks',
+                                'Design improved team boundaries'
+                            ]
+                        },
+                        {
+                            icon: 'fas fa-tasks',
+                            title: 'Workflow Optimization',
+                            description: 'Streamline how work moves through your organization.',
+                            framework: 'Kanban Method',
+                            steps: [
+                                'Visualize current workflow',
+                                'Identify bottlenecks and constraints',
+                                'Establish WIP limits',
+                                'Implement feedback loops',
+                                'Adopt culture of continuous improvement'
+                            ]
+                        }
+                    ],
+                    personal: [
+                        {
+                            icon: 'fas fa-compass',
+                            title: 'Personal Retrospective',
+                            description: 'Structured reflection on personal challenges and growth.',
+                            framework: 'Growth Mindset',
+                            steps: [
+                                'Document current situation objectively',
+                                'Identify limiting beliefs and patterns',
+                                'Explore alternative perspectives',
+                                'Create focused improvement plan',
+                                'Build accountability system'
+                            ]
+                        },
+                        {
+                            icon: 'fas fa-clock',
+                            title: 'Time Audit',
+                            description: 'Analyze how you currently spend your time and attention.',
+                            framework: 'Eisenhower Matrix',
+                            steps: [
+                                'Track time use for one week',
+                                'Categorize activities by urgency/importance',
+                                'Identify time-wasters and distractions',
+                                'Create deliberate time blocking system',
+                                'Implement regular review process'
+                            ]
+                        }
+                    ]
+                };
+                
+                // Get solutions for the specific domain, fallback to general if none available
+                const domainSolutions = solutionTemplates[domain] || [];
+                const generalSolutions = solutionTemplates.general || [];
+                
+                // Combine domain-specific and general solutions, prioritizing domain-specific
+                const combinedSolutions = [...domainSolutions, ...generalSolutions];
+                
+                // Store all domain solutions for later use
+                allDomainSolutions = [...combinedSolutions];
+                
+                return combinedSolutions.slice(0, 4); // Return first 4 solutions
+            }
+
+            // Generate AI solutions using the API service
+            async function generateAISolutions(problem, domain, complexity, context = '') {
+                try {
+                    return await apiService.generateSolutions(problem, domain, complexity, context);
+                } catch (error) {
+                    console.error('Error generating AI solutions:', error);
+                    
+                    // Fallback to local placeholder content if API fails
+                    const placeholders = [
+                        {
+                            icon: 'fas fa-atom',
+                            title: 'Innovative Approach 1',
+                            content: `I recommend applying first principles thinking to break down "${problem}" into its fundamental components. This would involve: 1) Identifying current assumptions, 2) Deconstructing the problem, 3) Reconstructing from the ground up.`,
+                            isAI: true
+                        },
+                        {
+                            icon: 'fas fa-network-wired',
+                            title: 'System Solution 1',
+                            content: `For "${problem}", consider implementing a constraint-based approach. Set artificial constraints (e.g., "What if we only had half the resources?") to force innovative thinking.`,
+                            isAI: true
+                        },
+                        {
+                            icon: 'fas fa-brain',
+                            title: 'Creative Framework 1',
+                            content: `My analysis suggests a paradoxical approach might work best for "${problem}". Try identifying and amplifying the existing problem to reveal underlying patterns.`,
+                            isAI: true
+                        }
+                    ];
+                    
+                    return placeholders;
+                }
+            }
+
+            // Generate more solutions
+            async function generateMoreSolutions() {
+                // Show loading state
+                generateSolutionsBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Generating...';
+                generateSolutionsBtn.disabled = true;
+                
+                try {
+                    let newSolutions = [];
+                    
+                    if (isAIMode) {
+                        const contextText = contextCheckbox.checked ? contextInput.value.trim() : '';
+                        newSolutions = await generateAISolutions(currentProblem, currentDomain, currentComplexity, contextText);
+                    } else {
+                        // Check if there are more unused framework solutions
+                        if (allDomainSolutions.length > 0) {
+                            newSolutions = allDomainSolutions.filter(
+                                s => !usedSolutionTitles.includes(s.title)
+                            ).slice(0, 2);
+                        }
+                    }
+                    
+                    if (newSolutions.length > 0) {
+                        currentSolutions = [...currentSolutions, ...newSolutions];
+                        displayedSolutions = [...currentSolutions];
+                        newSolutions.forEach(s => usedSolutionTitles.push(s.title));
+                        
+                        updateSolutionDisplay();
+                        updateSolutionCounter();
+                    } else {
+                        alert('No more unique solutions available for this domain');
+                    }
+                } catch (error) {
+                    console.error('Error generating more solutions:', error);
+                    alert('There was an error generating more solutions. Please try again.');
+                } finally {
+                    generateSolutionsBtn.innerHTML = '<i class="fas fa-plus mr-2"></i> Generate More';
+                    generateSolutionsBtn.disabled = false;
+                }
+            }
+
+            // Shuffle existing solutions
+            function shuffleSolutions() {
+                regenerateBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Shuffling...';
+                
+                setTimeout(() => {
+                    displayedSolutions = [...currentSolutions].sort(() => Math.random() - 0.5);
+                    updateSolutionDisplay();
+                    regenerateBtn.innerHTML = '<i class="fas fa-random mr-2"></i> Shuffle';
+                }, 500);
+            }
+
+            // Show structured solutions
+            function showStructuredSolutions() {
+                structuredSolutionsTab.classList.add('border-indigo-500', 'text-indigo-600');
+                structuredSolutionsTab.classList.remove('border-transparent', 'text-gray-500');
+                aiSolutionsTab.classList.add('border-transparent', 'text-gray-500');
+                aiSolutionsTab.classList.remove('border-indigo-500', 'text-indigo-600');
+                
+                displayedSolutions = currentSolutions.filter(s => !s.isAI);
+                updateSolutionDisplay();
+            }
+
+            // Show AI solutions
+            function showAISolutions() {
+                if (!isAIMode) {
+                    alert('Switch to AI Mode to access AI-generated solutions');
+                    return;
+                }
+                
+                aiSolutionsTab.classList.add('border-indigo-500', 'text-indigo-600');
+                aiSolutionsTab.classList.remove('border-transparent', 'text-gray-500');
+                structuredSolutionsTab.classList.add('border-transparent', 'text-gray-500');
+                structuredSolutionsTab.classList.remove('border-indigo-500', 'text-indigo-600');
+                
+                displayedSolutions = currentSolutions.filter(s => s.isAI);
+                updateSolutionDisplay();
+            }
+
+            // Update solution display
+            function updateSolutionDisplay() {
+                solutionDirections.innerHTML = '';
+                
+                if (displayedSolutions.length === 0) {
+                    solutionDirections.innerHTML = `
+                        <div class="md:col-span-2 flex flex-col items-center justify-center py-10 text-gray-400">
+                            <i class="fas fa-info-circle text-3xl mb-3"></i>
+                            <p>No solutions available in this category</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                displayedSolutions.forEach((solution, index) => {
+                    const solutionEl = document.createElement('div');
+                    solutionEl.className = `solution-card bg-white p-5 rounded-xl border border-gray-200 hover:border-indigo-200 cursor-pointer fade-in`;
+                    solutionEl.style.animationDelay = `${index * 0.1}s`;
+                    
+                    if (solution.isAI) {
+                        solutionEl.innerHTML = `
+                            <div class="flex items-start">
+                                <div class="text-indigo-500 mr-4 text-2xl">
+                                    <i class="${solution.icon}"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-bold text-gray-800 mb-2">${solution.title}</h3>
+                                    <p class="text-gray-600 mb-3 text-sm line-clamp-2">${solution.content}</p>
+                                    <span class="inline-block bg-indigo-50 text-indigo-600 text-xs px-2 py-1 rounded">
+                                        AI-Generated
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        solutionEl.innerHTML = `
+                            <div class="flex items-start">
+                                <div class="text-indigo-500 mr-4 text-2xl">
+                                    <i class="${solution.icon}"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-bold text-gray-800 mb-2">${solution.title}</h3>
+                                    <p class="text-gray-600 mb-3">${solution.description}</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded">
+                                            ${solution.framework}
+                                        </span>
+                                        <button class="text-indigo-600 hover:text-indigo-800 text-sm">
+                                            Details <i class="fas fa-chevron-right ml-1"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    solutionEl.addEventListener('click', () => openSolutionModal(solution, index));
+                    solutionDirections.appendChild(solutionEl);
+                });
+            }
+
+            // Open solution modal
+            function openSolutionModal(solution, index) {
+                currentSolutionIndex = index;
+                currentOpenSolution = solution;
+                
+                if (solution.isAI) {
+                    modalContent.innerHTML = `
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="text-indigo-500 mr-4 text-3xl mt-1">
+                                    <i class="${solution.icon}"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">${solution.title}</h3>
+                                    <div class="flex items-center mb-4">
+                                        <span class="bg-indigo-50 text-indigo-600 text-xs px-2 py-1 rounded-full">
+                                            AI-Generated Solution
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="prose prose-sm max-w-none">
+                                <p>${solution.content.replace(/\n/g, '<br>')}</p>
+                            </div>
+                            
+                            <div class="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h4 class="font-medium text-blue-800 mb-2 flex items-center">
+                                    <i class="fas fa-lightbulb mr-2"></i> AI Implementation Notes
+                                </h4>
+                                <p class="text-sm text-gray-700">
+                                    This solution was generated specifically for your problem context. The AI has analyzed similar historical cases and patterns to propose this approach.
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    modalContent.innerHTML = `
+                        <div class="space-y-5">
+                            <div class="flex items-start">
+                                <div class="text-indigo-500 mr-4 text-3xl mt-1">
+                                    <i class="${solution.icon}"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">${solution.title}</h3>
+                                    <div class="flex items-center mb-4">
+                                        <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full mr-2">
+                                            ${solution.framework} Framework
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="prose max-w-none">
+                                <p class="text-gray-700">${solution.description}</p>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <h4 class="font-medium text-gray-800 mb-3">Implementation Steps:</h4>
+                                <ol class="space-y-2">
+                                    ${solution.steps.map((step, i) => `
+                                        <li class="flex items-start">
+                                            <span class="flex-shrink-0 bg-indigo-100 text-indigo-600 h-6 w-6 rounded-full flex items-center justify-center text-sm mt-0.5 mr-3">${i + 1}</span>
+                                            <p class="text-gray-700">${step}</p>
+                                        </li>
+                                    `).join('')}
+                                </ol>
+                            </div>
+                            
+                            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+                                    <h4 class="font-medium text-yellow-800 mb-2 flex items-center">
+                                        <i class="fas fa-clock mr-2"></i> Expected Time
+                                    </h4>
+                                    <p class="text-sm text-gray-700">
+                                        ${['1-2 weeks', '2-4 weeks', '4-8 weeks'][currentComplexity - 1]} to implement fully
+                                    </p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                                    <h4 class="font-medium text-green-800 mb-2 flex items-center">
+                                        <i class="fas fa-chart-line mr-2"></i> Success Rate
+                                    </h4>
+                                    <p class="text-sm text-gray-700">
+                                        ${['60-70%', '70-80%', '80-90%'][currentComplexity - 1]} for similar problems
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Update navigation
+                updateModalNavigation();
+                solutionModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Close solution modal
+            function closeSolutionModal() {
+                solutionModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+
+            // Show previous solution
+            function showPrevSolution() {
+                if (currentSolutionIndex > 0) {
+                    currentSolutionIndex--;
+                    openSolutionModal(displayedSolutions[currentSolutionIndex], currentSolutionIndex);
+                }
+            }
+
+            // Show next solution
+            function showNextSolution() {
+                if (currentSolutionIndex < displayedSolutions.length - 1) {
+                    currentSolutionIndex++;
+                    openSolutionModal(displayedSolutions[currentSolutionIndex], currentSolutionIndex);
+                }
+            }
+
+            // Update modal navigation buttons
+            function updateModalNavigation() {
+                prevSolutionBtn.disabled = currentSolutionIndex === 0;
+                nextSolutionBtn.disabled = currentSolutionIndex === displayedSolutions.length - 1;
+                solutionNav.textContent = `${currentSolutionIndex + 1} of ${displayedSolutions.length}`;
+            }
+
+            // Export solution
+            function exportSolution() {
+                alert(`Exported "${currentOpenSolution.title}" solution`);
+                // In a real app, would generate PDF, image, or text file
+            }
+
+            // Save solutions
+            function saveSolutions() {
+                alert(`Saved ${currentSolutions.length} solutions to your library`);
+                // In a real app, would save to user account/database
+            }
+
+            // Reframe problem with AI
+            async function reframeProblem() {
+                reframeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Reframing...';
+                reframeBtn.disabled = true;
+                
+                reframeResults.innerHTML = `
+                    <div class="text-center py-4 text-gray-400">
+                        <i class="fas fa-circle-notch fa-spin mr-2"></i> Generating alternative problem statements...
+                    </div>
+                `;
+                
+                try {
+                    // Call API to reframe the problem
+                    const reframes = await apiService.reframeProblem(currentProblem, currentDomain);
+                    
+                    reframeResults.innerHTML = `
+                        <div class="space-y-4">
+                            ${reframes.map((reframe, index) => `
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 fade-in" 
+                                     style="animation-delay: ${index * 0.1}s">
+                                    <p>${reframe}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Error reframing problem:', error);
+                    
+                    // Fallback to local reframing options
+                    const fallbackReframes = [
+                        `Alternative perspective: Could "${currentProblem}" actually be an opportunity for innovation?`,
+                        `Reframed as a "How might we" question: How might we ${currentProblem.toLowerCase().replace(/(^[a-z]| [a-z])/g, (match) => match.toUpperCase()).replace('?', '')} in a way that creates more value?`,
+                        `Inverse approach: What if we wanted to make "${currentProblem}" worse? Identifying those levers might reveal unexpected solutions.`
+                    ];
+                    
+                    reframeResults.innerHTML = `
+                        <div class="space-y-4">
+                            ${fallbackReframes.map((reframe, index) => `
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 fade-in">
+                                    <p>${reframe}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } finally {
+                    reframeBtn.innerHTML = '<i class="fas fa-sync-alt mr-1"></i> Reframe';
+                    reframeBtn.disabled = false;
+                }
+            }
+
+            // Enhance solution with AI
+            async function enhanceWithAI(promptType) {
+                if (!currentOpenSolution) return;
+                
+                const loadingEl = document.createElement('div');
+                loadingEl.className = 'text-center py-4 text-gray-400';
+                loadingEl.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Generating enhancement...';
+                
+                modalContent.appendChild(loadingEl);
+                
+                try {
+                    // Call API for enhancement
+                    const enhancementHTML = await apiService.enhanceSolution(
+                        currentOpenSolution, 
+                        promptType, 
+                        currentProblem
+                    );
+                    
+                    loadingEl.remove();
+                    modalContent.insertAdjacentHTML('beforeend', enhancementHTML);
+                    
+                    // Scroll to new content
+                    const modalParent = modalContent.parentElement;
+                    modalParent.scrollTop = modalParent.scrollHeight;
+                } catch (error) {
+                    console.error('Error enhancing solution:', error);
+                    
+                    // Fallback to basic enhancement
+                    const fallbackEnhancements = {
+                        'Elaborate': `
+                            <div class="mt-4 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h4 class="font-medium text-blue-800 mb-2">Detailed Explanation</h4>
+                                <p class="text-gray-700">
+                                    The solution leverages systems thinking to address core aspects of your problem. 
+                                    Key mechanisms include feedback loops that create sustainable change.
+                                </p>
+                            </div>
+                        `,
+                        'Give examples': `
+                            <div class="mt-4 bg-green-50 p-4 rounded-lg border border-green-100">
+                                <h4 class="font-medium text-green-800 mb-2">Example Applications</h4>
+                                <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                                    <li>A SaaS company used this approach to increase retention by 30%</li>
+                                    <li>Case study: Dropbox implemented a similar framework to solve their onboarding challenges</li>
+                                </ul>
+                            </div>
+                        `,
+                        'Create action steps': `
+                            <div class="mt-4 bg-purple-50 p-4 rounded-lg border border-purple-100">
+                                <h4 class="font-medium text-purple-800 mb-2">Implementation Plan</h4>
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <span class="bg-purple-100 text-purple-600 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">1</span>
+                                        <p class="text-gray-700">Conduct preliminary research (Day 1-2)</p>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <span class="bg-purple-100 text-purple-600 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">2</span>
+                                        <p class="text-gray-700">Run small-scale tests (Day 3-5)</p>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <span class="bg-purple-100 text-purple-600 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">3</span>
+                                        <p class="text-gray-700">Iterate based on feedback (Week 2-4)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `,
+                        'Suggest metrics': `
+                            <div class="mt-4 bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+                                <h4 class="font-medium text-yellow-800 mb-2">Key Performance Indicators</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-700">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-chart-bar text-yellow-500 mt-0.5 mr-2"></i>
+                                        <p>Adoption rate</p>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-chart-line text-yellow-500 mt-0.5 mr-2"></i>
+                                        <p>Revenue impact</p>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-clock text-yellow-500 mt-0.5 mr-2"></i>
+                                        <p>Implementation timeline</p>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-smile text-yellow-500 mt-0.5 mr-2"></i>
+                                        <p>User satisfaction</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                    };
+                    
+                    loadingEl.remove();
+                    modalContent.insertAdjacentHTML('beforeend', fallbackEnhancements[promptType] || 
+                        `<div class="mt-4 bg-red-50 p-4 rounded-lg border border-red-100">
+                            <h4 class="font-medium text-red-800 mb-2">Error</h4>
+                            <p class="text-gray-700">
+                                Could not generate enhancement. Please try again later.
+                            </p>
+                        </div>`
+                    );
+                }
+            }
+
+            // Send custom AI prompt
+            async function sendCustomAIRequest() {
+                const prompt = customAiPrompt.value.trim();
+                if (!prompt) return;
+                
+                const promptEl = document.createElement('div');
+                promptEl.className = 'bg-indigo-50 rounded-lg p-3 mb-3';
+                promptEl.innerHTML = `
+                    <div class="text-xs text-indigo-700 mb-1">You asked:</div>
+                    <p class="text-gray-800">${prompt}</p>
+                `;
+                
+                const loadingEl = document.createElement('div');
+                loadingEl.className = 'bg-gray-50 rounded-lg p-3 text-center text-gray-400';
+                loadingEl.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Generating response...';
+                
+                modalContent.appendChild(promptEl);
+                modalContent.appendChild(loadingEl);
+                
+                // Scroll to bottom
+                modalContent.parentElement.scrollTop = modalContent.parentElement.scrollHeight;
+                
+                // Clear input
+                customAiPrompt.value = '';
+                
+                try {
+                    // Call API for custom prompt response
+                    const response = await apiService.processCustomPrompt(
+                        prompt,
+                        currentOpenSolution,
+                        currentProblem
+                    );
+                    
+                    loadingEl.innerHTML = '';
+                    loadingEl.className = 'bg-white rounded-lg p-3 border border-gray-200';
+                    loadingEl.innerHTML = `
+                        <div class="text-xs text-gray-500 mb-1">AI Response:</div>
+                        <p class="text-gray-800">${response}</p>
+                    `;
+                } catch (error) {
+                    console.error('Error processing custom prompt:', error);
+                    
+                    loadingEl.innerHTML = '';
+                    loadingEl.className = 'bg-white rounded-lg p-3 border border-red-100';
+                    loadingEl.innerHTML = `
+                        <div class="text-xs text-gray-500 mb-1">Error:</div>
+                        <p class="text-gray-800">
+                            Sorry, I couldn't process your request at this time. Please try again later.
+                        </p>
+                    `;
+                }
+            }
+
+            // Update solution counter
+            function updateSolutionCounter() {
+                const totalSolutions = isAIMode ? 8 : 6; // AI can generate more variations
+                const exploredPercent = Math.min(100, Math.round((usedSolutionTitles.length / totalSolutions) * 100));
+                
+                solutionCounter.textContent = `${usedSolutionTitles.length} solutions explored`;
+                solutionProgress.style.width = `${exploredPercent}%`;
+            }
+
+            // Initialize the app
+            initialize();
+        });
+    </script>
+<p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px;position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">Made with <img src="https://enzostvs-deepsite.hf.space/logo.svg" alt="DeepSite Logo" style="width: 16px; height: 16px; vertical-align: middle;display:inline-block;margin-right:3px;filter:brightness(0) invert(1);"><a href="https://enzostvs-deepsite.hf.space" style="color: #fff;text-decoration: underline;" target="_blank" >DeepSite</a> - <a href="https://enzostvs-deepsite.hf.space?remix=GavinoGM/smartsolver-concept" style="color: #fff;text-decoration: underline;" target="_blank" >🧬 Remix</a></p></body>
+</html>
