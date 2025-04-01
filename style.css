@@ -46,12 +46,41 @@ body {
 
 textarea, input, select {
     font-size: 16px !important;
-    line-height: 1.5 !important;
+    line-height: 1.6 !important;
+    letter-spacing: 0.01em !important;
+}
+
+textarea {
+    min-height: 120px !important;
 }
 
 label {
-    font-size: 18px !important;
-    margin-bottom: 8px !important;
+    font-size: 20px !important;
+    margin-bottom: 12px !important;
+    letter-spacing: -0.01em !important;
+}
+
+.card-glow {
+    margin-bottom: 2rem !important;
+}
+
+.grid {
+    gap: 1.5rem !important;
+}
+
+.section-title {
+    font-size: 24px !important;
+    margin-bottom: 1.5rem !important;
+    font-weight: 600 !important;
+}
+
+.input-group {
+    margin-bottom: 2rem !important;
+}
+
+.analysis-card {
+    padding: 1.5rem !important;
+    border-radius: 1rem !important;
 }
 
 .card-glow:hover {
