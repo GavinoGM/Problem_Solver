@@ -45,36 +45,73 @@ body {
 }
 
 textarea, input, select {
-    font-size: 18px !important;
-    line-height: 1.7 !important;
+    font-size: 20px !important;
+    line-height: 1.8 !important;
     letter-spacing: 0.01em !important;
-    padding: 16px !important;
+    padding: 20px !important;
+    border-radius: 12px !important;
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
 }
 
 textarea {
-    min-height: 160px !important;
-    margin-bottom: 24px !important;
+    min-height: 200px !important;
+    margin-bottom: 32px !important;
+    resize: vertical !important;
+}
+
+textarea:focus, input:focus, select:focus {
+    border-color: rgba(99, 102, 241, 0.5) !important;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2) !important;
+    outline: none !important;
 }
 
 .card-glow {
-    margin-bottom: 32px !important;
-    padding: 32px !important;
+    margin-bottom: 40px !important;
+    padding: 40px !important;
+    border-radius: 16px !important;
 }
 
 .section-title {
-    font-size: 28px !important;
+    font-size: 32px !important;
+    margin-bottom: 32px !important;
+    font-weight: 700 !important;
+    color: white !important;
+    letter-spacing: -0.02em !important;
+}
+
+.analysis-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
     margin-bottom: 24px !important;
-    font-weight: 600 !important;
 }
 
 .grid {
-    gap: 24px !important;
+    gap: 32px !important;
+    margin: 32px 0 !important;
 }
 
 label {
-    font-size: 20px !important;
-    margin-bottom: 12px !important;
+    font-size: 22px !important;
+    margin-bottom: 16px !important;
     letter-spacing: -0.01em !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500 !important;
+}
+
+.input-group {
+    margin-bottom: 32px !important;
+}
+
+.card-content {
+    padding: 24px !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .card-glow {
