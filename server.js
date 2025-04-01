@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -62,7 +63,7 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
   console.log(`OpenAI API key configured: ${!!process.env.OPENAI_API_KEY}`);
 });
