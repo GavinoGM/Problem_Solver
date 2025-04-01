@@ -67,15 +67,12 @@
             <p class="text-lg text-gray-600 max-w-2xl mx-auto">Harness human frameworks and AI intelligence to solve any challenge</p>
         </header>
 
-        <!-- AI Mode Toggle -->
+        <!-- AI Mode Header -->
         <div class="flex justify-center mb-10">
-            <div class="bg-white rounded-full shadow-md p-1 inline-flex border border-gray-200">
-                <button id="fixedModeBtn" class="px-6 py-2 rounded-full font-medium bg-indigo-600 text-white transition-all duration-300">
-                    <i class="fas fa-box mr-2"></i> Framework Mode
-                </button>
-                <button id="aiModeBtn" class="px-6 py-2 rounded-full font-medium bg-white text-gray-600 hover:text-gray-800 transition-all duration-300">
-                    <i class="fas fa-robot mr-2"></i> AI Creative Mode
-                </button>
+            <div class="bg-white rounded-full shadow-md p-2 inline-flex border border-gray-200">
+                <div class="px-6 py-2 rounded-full font-medium bg-indigo-600 text-white flex items-center">
+                    <i class="fas fa-robot mr-2"></i> AI-Powered Problem Solving
+                </div>
             </div>
         </div>
 
@@ -184,14 +181,11 @@
                 </div>
             </div>
             
-            <!-- Solutions Toggle -->
+            <!-- Solutions Header -->
             <div class="flex mb-6 border-b border-gray-200">
-                <button id="structuredSolutionsTab" class="px-4 py-2 font-medium border-b-2 border-indigo-500 text-indigo-600">
-                    <i class="fas fa-layer-group mr-2"></i> Structured Approaches
-                </button>
-                <button id="aiSolutionsTab" class="px-4 py-2 font-medium text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-robot mr-2"></i> AI-Generated Ideas
-                </button>
+                <div class="px-4 py-2 font-medium border-b-2 border-indigo-500 text-indigo-600">
+                    <i class="fas fa-robot mr-2"></i> AI-Generated Solutions
+                </div>
             </div>
             
             <!-- Solutions Container -->
@@ -297,8 +291,6 @@
             const solutionDirections = document.getElementById('solutionDirections');
             const solutionCounter = document.getElementById('solutionCounter');
             const solutionProgress = document.getElementById('solutionProgress');
-            const structuredSolutionsTab = document.getElementById('structuredSolutionsTab');
-            const aiSolutionsTab = document.getElementById('aiSolutionsTab');
             const generateSolutionsBtn = document.getElementById('generateSolutionsBtn');
             const regenerateBtn = document.getElementById('regenerateBtn');
             const saveSolutionsBtn = document.getElementById('saveSolutionsBtn');
@@ -312,8 +304,6 @@
             const aiEnhanceButtons = document.querySelectorAll('.ai-enhance-btn');
             const customAiPrompt = document.getElementById('customAiPrompt');
             const sendCustomPrompt = document.getElementById('sendCustomPrompt');
-            const fixedModeBtn = document.getElementById('fixedModeBtn');
-            const aiModeBtn = document.getElementById('aiModeBtn');
 
             // State variables
             let currentProblem = '';
@@ -322,10 +312,9 @@
             let currentSolutions = [];
             let displayedSolutions = [];
             let usedSolutionTitles = [];
-            let allDomainSolutions = [];
             let currentSolutionIndex = 0;
             let currentOpenSolution = null;
-            let isAIMode = false;
+            let isAIMode = true;
             
             // Error handling function
             function handleApiError(error, fallbackAction) {
@@ -348,9 +337,7 @@
                 regenerateBtn.addEventListener('click', shuffleSolutions);
                 saveSolutionsBtn.addEventListener('click', saveSolutions);
                 
-                // Solution tabs
-                structuredSolutionsTab.addEventListener('click', showStructuredSolutions);
-                aiSolutionsTab.addEventListener('click', showAISolutions);
+                // Solution tabs removed - now only AI solutions
                 
                 // Modal interactions
                 closeModalBtn.addEventListener('click', closeSolutionModal);
@@ -367,30 +354,15 @@
                     if (e.key === 'Enter') sendCustomAIRequest();
                 });
                 
-                // Mode toggle
-                fixedModeBtn.addEventListener('click', () => toggleMode(false));
-                aiModeBtn.addEventListener('click', () => toggleMode(true));
+                // Initialize AI mode
+                initializeAIMode();
             }
 
-            // Toggle between fixed and AI mode
-            function toggleMode(aiEnabled) {
-                isAIMode = aiEnabled;
-                
-                if (aiEnabled) {
-                    fixedModeBtn.classList.remove('bg-indigo-600', 'text-white');
-                    fixedModeBtn.classList.add('bg-white', 'text-gray-600');
-                    aiModeBtn.classList.remove('bg-white', 'text-gray-600');
-                    aiModeBtn.classList.add('bg-indigo-600', 'text-white');
-                    reframeBtn.disabled = false;
-                    aiReframingSection.classList.remove('hidden');
-                } else {
-                    fixedModeBtn.classList.add('bg-indigo-600', 'text-white');
-                    fixedModeBtn.classList.remove('bg-white', 'text-gray-600');
-                    aiModeBtn.classList.add('bg-white', 'text-gray-600');
-                    aiModeBtn.classList.remove('bg-indigo-600', 'text-white');
-                    reframeBtn.disabled = true;
-                    aiReframingSection.classList.add('hidden');
-                }
+            // AI mode is now the only mode
+            function initializeAIMode() {
+                isAIMode = true;
+                reframeBtn.disabled = false;
+                aiReframingSection.classList.remove('hidden');
             }
 
             // Update complexity value display
@@ -444,19 +416,17 @@
                 try {
                     await generateInitialSolutions();
                     
-                    // Show AI reframing section if in AI mode
-                    if (isAIMode) {
-                        aiReframingSection.classList.remove('hidden');
-                    }
+                    // Show AI reframing section
+                    aiReframingSection.classList.remove('hidden');
                 } catch (error) {
                     handleApiError(error, () => {
-                        // Fall back to local solution generation
-                        isAIMode = false;
-                        toggleMode(false);
-                        currentSolutions = generateFrameworkSolutions(currentDomain);
-                        displayedSolutions = [...currentSolutions];
-                        updateSolutionDisplay();
-                        updateSolutionCounter();
+                        // Show error message to user
+                        solutionDirections.innerHTML = `
+                            <div class="md:col-span-2 flex flex-col items-center justify-center py-10 text-red-500">
+                                <i class="fas fa-exclamation-circle text-3xl mb-3"></i>
+                                <p>Unable to connect to AI service. Please check your connection and try again.</p>
+                            </div>
+                        `;
                     });
                 } finally {
                     // Reset button state
@@ -542,241 +512,25 @@
 
             // Generate initial solutions
             async function generateInitialSolutions() {
-                if (isAIMode) {
-                    try {
-                        const contextText = contextCheckbox.checked ? contextInput.value.trim() : '';
-                        currentSolutions = await generateAISolutions(currentProblem, currentDomain, currentComplexity, contextText);
-                    } catch (error) {
-                        console.error('Error generating AI solutions:', error);
-                        throw error; // Re-throw to be handled by the caller
-                    }
-                } else {
-                    currentSolutions = generateFrameworkSolutions(currentDomain);
+                try {
+                    const contextText = contextCheckbox.checked ? contextInput.value.trim() : '';
+                    currentSolutions = await generateAISolutions(currentProblem, currentDomain, currentComplexity, contextText);
+                    
+                    usedSolutionTitles = currentSolutions.map(s => s.title);
+                    
+                    // Reset displayed solutions
+                    displayedSolutions = [...currentSolutions];
+                    
+                    // Update UI
+                    updateSolutionDisplay();
+                    updateSolutionCounter();
+                } catch (error) {
+                    console.error('Error generating AI solutions:', error);
+                    throw error; // Re-throw to be handled by the caller
                 }
-                
-                usedSolutionTitles = currentSolutions.map(s => s.title);
-                
-                // Reset displayed solutions
-                displayedSolutions = [...currentSolutions];
-                
-                // Update UI
-                updateSolutionDisplay();
-                updateSolutionCounter();
             }
 
-            // Generate framework-based solutions
-            function generateFrameworkSolutions(domain) {
-                const solutionTemplates = {
-                    general: [
-                        {
-                            icon: 'fas fa-crosshairs',
-                            title: 'Goal Clarification',
-                            description: 'Clearly define success criteria and measurable objectives.',
-                            framework: 'SMART Goals',
-                            steps: [
-                                'Define Specific objectives',
-                                'Establish Measurable metrics',
-                                'Ensure goals are Actionable',
-                                'Keep Relevant to core problem',
-                                'Set Time-bound milestones'
-                            ]
-                        },
-                        {
-                            icon: 'fas fa-project-diagram',
-                            title: 'Systems Mapping',
-                            description: 'Visualize relationships between components of the system.',
-                            framework: 'Systems Thinking',
-                            steps: [
-                                'Identify all system elements',
-                                'Map connections between elements',
-                                'Analyze feedback loops',
-                                'Identify leverage points',
-                                'Test interventions'
-                            ]
-                        },
-                        {
-                            icon: 'fas fa-chess',
-                            title: 'Scenario Planning',
-                            description: 'Explore different future scenarios to anticipate challenges.',
-                            framework: 'Scenario Analysis',
-                            steps: [
-                                'Identify key uncertainties',
-                                'Define axes of difference',
-                                'Develop 2-4 scenarios',
-                                'Analyze implications',
-                                'Develop contingency plans'
-                            ]
-                        }
-                    ],
-                    product: [
-                        {
-                            icon: 'fas fa-user-check',
-                            title: 'User Journey Audit',
-                            description: 'Examine all touchpoints in the customer experience.',
-                            framework: 'UX Mapping',
-                            steps: [
-                                'Map current user journey',
-                                'Identify pain points',
-                                'Highlight moments of delight',
-                                'Prioritize improvement areas',
-                                'Prototype solutions'
-                            ]
-                        },
-                        {
-                            icon: 'fas fa-bezier-curve',
-                            title: 'Feature Prioritization',
-                            description: 'Systematically evaluate which features to build next.',
-                            framework: 'RICE Scoring',
-                            steps: [
-                                'Calculate Reach of feature',
-                                'Estimate Impact',
-                                'Assess Confidence level',
-                                'Calculate Effort required',
-                                'Score and prioritize'
-                            ]
-                        }
-                    ],
-                    marketing: [
-                        {
-                            icon: 'fas fa-funnel-dollar',
-                            title: 'Conversion Funnel Analysis',
-                            description: 'Optimize each stage of the customer acquisition journey.',
-                            framework: 'AIDA Model',
-                            steps: [
-                                'Analyze Awareness metrics',
-                                'Improve Interest generation',
-                                'Boost Desire factors',
-                                'Remove Action barriers',
-                                'Test and iterate'
-                            ]
-                        }
-                    ],
-                    tech: [
-                        {
-                            icon: 'fas fa-code-branch',
-                            title: 'Technical Debt Assessment',
-                            description: 'Identify and prioritize technical debt in your systems.',
-                            framework: 'Tech Debt Quadrant',
-                            steps: [
-                                'Catalog existing technical debt',
-                                'Classify by impact and effort',
-                                'Assess risk and urgency',
-                                'Create remediation plan',
-                                'Implement prevention measures'
-                            ]
-                        },
-                        {
-                            icon: 'fas fa-sitemap',
-                            title: 'Architecture Review',
-                            description: 'Evaluate your current technical architecture against requirements.',
-                            framework: 'C4 Model',
-                            steps: [
-                                'Document context diagram',
-                                'Map container relationships',
-                                'Analyze component structures',
-                                'Identify architectural smells',
-                                'Define evolution strategy'
-                            ]
-                        }
-                    ],
-                    business: [
-                        {
-                            icon: 'fas fa-chart-line',
-                            title: 'Business Model Canvas',
-                            description: 'Analyze and visualize your current business model.',
-                            framework: 'BMC Framework',
-                            steps: [
-                                'Define value propositions',
-                                'Identify key activities and resources',
-                                'Map customer segments and relationships',
-                                'Analyze revenue streams and cost structure',
-                                'Identify improvement opportunities'
-                            ]
-                        },
-                        {
-                            icon: 'fas fa-balance-scale',
-                            title: 'Competitive Analysis',
-                            description: 'Systematically assess your position against competitors.',
-                            framework: 'Porter\'s Five Forces',
-                            steps: [
-                                'Analyze supplier power',
-                                'Evaluate buyer power',
-                                'Assess threat of new entrants',
-                                'Review threat of substitution',
-                                'Map competitive rivalry'
-                            ]
-                        }
-                    ],
-                    team: [
-                        {
-                            icon: 'fas fa-users-cog',
-                            title: 'Team Dynamics Assessment',
-                            description: 'Analyze team health and collaboration patterns.',
-                            framework: 'Team Topologies',
-                            steps: [
-                                'Map current team structures',
-                                'Identify communication patterns',
-                                'Assess team cognitive load',
-                                'Analyze delivery bottlenecks',
-                                'Design improved team boundaries'
-                            ]
-                        },
-                        {
-                            icon: 'fas fa-tasks',
-                            title: 'Workflow Optimization',
-                            description: 'Streamline how work moves through your organization.',
-                            framework: 'Kanban Method',
-                            steps: [
-                                'Visualize current workflow',
-                                'Identify bottlenecks and constraints',
-                                'Establish WIP limits',
-                                'Implement feedback loops',
-                                'Adopt culture of continuous improvement'
-                            ]
-                        }
-                    ],
-                    personal: [
-                        {
-                            icon: 'fas fa-compass',
-                            title: 'Personal Retrospective',
-                            description: 'Structured reflection on personal challenges and growth.',
-                            framework: 'Growth Mindset',
-                            steps: [
-                                'Document current situation objectively',
-                                'Identify limiting beliefs and patterns',
-                                'Explore alternative perspectives',
-                                'Create focused improvement plan',
-                                'Build accountability system'
-                            ]
-                        },
-                        {
-                            icon: 'fas fa-clock',
-                            title: 'Time Audit',
-                            description: 'Analyze how you currently spend your time and attention.',
-                            framework: 'Eisenhower Matrix',
-                            steps: [
-                                'Track time use for one week',
-                                'Categorize activities by urgency/importance',
-                                'Identify time-wasters and distractions',
-                                'Create deliberate time blocking system',
-                                'Implement regular review process'
-                            ]
-                        }
-                    ]
-                };
-                
-                // Get solutions for the specific domain, fallback to general if none available
-                const domainSolutions = solutionTemplates[domain] || [];
-                const generalSolutions = solutionTemplates.general || [];
-                
-                // Combine domain-specific and general solutions, prioritizing domain-specific
-                const combinedSolutions = [...domainSolutions, ...generalSolutions];
-                
-                // Store all domain solutions for later use
-                allDomainSolutions = [...combinedSolutions];
-                
-                return combinedSolutions.slice(0, 4); // Return first 4 solutions
-            }
+            // AI solutions are now the only type of solutions
 
             // Generate AI solutions using the API service
             async function generateAISolutions(problem, domain, complexity, context = '') {
@@ -818,19 +572,8 @@
                 generateSolutionsBtn.disabled = true;
                 
                 try {
-                    let newSolutions = [];
-                    
-                    if (isAIMode) {
-                        const contextText = contextCheckbox.checked ? contextInput.value.trim() : '';
-                        newSolutions = await generateAISolutions(currentProblem, currentDomain, currentComplexity, contextText);
-                    } else {
-                        // Check if there are more unused framework solutions
-                        if (allDomainSolutions.length > 0) {
-                            newSolutions = allDomainSolutions.filter(
-                                s => !usedSolutionTitles.includes(s.title)
-                            ).slice(0, 2);
-                        }
-                    }
+                    const contextText = contextCheckbox.checked ? contextInput.value.trim() : '';
+                    const newSolutions = await generateAISolutions(currentProblem, currentDomain, currentComplexity, contextText);
                     
                     if (newSolutions.length > 0) {
                         currentSolutions = [...currentSolutions, ...newSolutions];
@@ -862,30 +605,16 @@
                 }, 500);
             }
 
-            // Show structured solutions
-            function showStructuredSolutions() {
-                structuredSolutionsTab.classList.add('border-indigo-500', 'text-indigo-600');
-                structuredSolutionsTab.classList.remove('border-transparent', 'text-gray-500');
-                aiSolutionsTab.classList.add('border-transparent', 'text-gray-500');
-                aiSolutionsTab.classList.remove('border-indigo-500', 'text-indigo-600');
-                
-                displayedSolutions = currentSolutions.filter(s => !s.isAI);
-                updateSolutionDisplay();
-            }
+            // No more structured solutions, only AI solutions
 
             // Show AI solutions
             function showAISolutions() {
-                if (!isAIMode) {
-                    alert('Switch to AI Mode to access AI-generated solutions');
-                    return;
-                }
-                
                 aiSolutionsTab.classList.add('border-indigo-500', 'text-indigo-600');
                 aiSolutionsTab.classList.remove('border-transparent', 'text-gray-500');
                 structuredSolutionsTab.classList.add('border-transparent', 'text-gray-500');
                 structuredSolutionsTab.classList.remove('border-indigo-500', 'text-indigo-600');
                 
-                displayedSolutions = currentSolutions.filter(s => s.isAI);
+                displayedSolutions = [...currentSolutions];
                 updateSolutionDisplay();
             }
 
@@ -1296,7 +1025,7 @@
 
             // Update solution counter
             function updateSolutionCounter() {
-                const totalSolutions = isAIMode ? 8 : 6; // AI can generate more variations
+                const totalSolutions = 10; // Maximum number of AI solutions to track
                 const exploredPercent = Math.min(100, Math.round((usedSolutionTitles.length / totalSolutions) * 100));
                 
                 solutionCounter.textContent = `${usedSolutionTitles.length} solutions explored`;
