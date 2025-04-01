@@ -45,13 +45,30 @@ body {
 }
 
 textarea, input, select {
-    font-size: 16px !important;
-    line-height: 1.6 !important;
+    font-size: 18px !important;
+    line-height: 1.7 !important;
     letter-spacing: 0.01em !important;
+    padding: 16px !important;
 }
 
 textarea {
-    min-height: 120px !important;
+    min-height: 160px !important;
+    margin-bottom: 24px !important;
+}
+
+.card-glow {
+    margin-bottom: 32px !important;
+    padding: 32px !important;
+}
+
+.section-title {
+    font-size: 28px !important;
+    margin-bottom: 24px !important;
+    font-weight: 600 !important;
+}
+
+.grid {
+    gap: 24px !important;
 }
 
 label {
