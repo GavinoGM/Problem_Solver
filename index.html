@@ -1125,14 +1125,41 @@
 
             // Initialize the app
             initialize();
+            
+            // Initialize Mermaid with specific configuration
             mermaid.initialize({ 
-                startOnLoad: true,
+                startOnLoad: false,
                 theme: 'default',
                 securityLevel: 'loose',
                 flowchart: {
                     htmlLabels: true,
                     curve: 'basis'
                 }
+            });
+
+            // Function to render Mermaid diagrams
+            function renderMermaidDiagrams() {
+                const elements = document.getElementsByClassName('mermaid');
+                Array.from(elements).forEach((element) => {
+                    // Reset the element content to trigger re-render
+                    const content = element.textContent;
+                    element.textContent = content;
+                    mermaid.init(undefined, element);
+                });
+            }
+
+            // Add observer to handle dynamically added Mermaid diagrams
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.addedNodes.length) {
+                        renderMermaidDiagrams();
+                    }
+                });
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
             });
         });
     </script>
