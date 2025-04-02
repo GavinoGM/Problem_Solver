@@ -1128,13 +1128,24 @@
             
             // Initialize Mermaid with specific configuration
             mermaid.initialize({ 
-                startOnLoad: false,
+                startOnLoad: true,
                 theme: 'default',
                 securityLevel: 'loose',
                 flowchart: {
                     htmlLabels: true,
-                    curve: 'basis'
+                    curve: 'basis',
+                    nodeSpacing: 50,
+                    rankSpacing: 50,
+                    defaultRenderer: 'dagre-d3'
+                },
+                themeVariables: {
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Arial", sans-serif'
                 }
+            });
+
+            // Force Mermaid to initialize when modal opens
+            solutionModal.addEventListener('shown.bs.modal', function () {
+                mermaid.init(undefined, document.querySelectorAll('.mermaid'));
             });
 
             // Function to render Mermaid diagrams
