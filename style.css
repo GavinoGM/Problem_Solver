@@ -26,3 +26,6 @@ p {
 .card p:last-child {
 	margin-bottom: 0;
 }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

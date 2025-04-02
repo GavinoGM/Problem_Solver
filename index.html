@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Solver | AI-Powered Problem Solving</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="./style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
     <style>
@@ -1132,8 +1132,8 @@
             
             // Initialize Mermaid with specific configuration
             mermaid.initialize({ 
-                startOnLoad: false,
-                theme: 'neutral',
+                startOnLoad: true,
+                theme: 'default',
                 securityLevel: 'loose',
                 flowchart: {
                     htmlLabels: true,
@@ -1144,15 +1144,10 @@
             });
 
             // Force Mermaid to initialize when modal opens
-            solutionModal.addEventListener('shown.bs.modal', function () {
-                document.querySelectorAll('.mermaid').forEach((element) => {
-                    try {
-                        element.innerHTML = element.getAttribute('data-graph');
-                        mermaid.init(undefined, element);
-                    } catch (err) {
-                        console.error('Mermaid rendering error:', err);
-                    }
-                });
+            solutionModal.addEventListener('click', function () {
+                setTimeout(() => {
+                    mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+                }, 100);
             });
 
             // Function to render Mermaid diagrams
