@@ -762,10 +762,14 @@
                                 <h4 class="font-medium text-gray-800 mb-4">Visual Representation</h4>
                                 <div class="mermaid">
                                     graph TD
-                                        A[Problem: ${currentProblem.substring(0, 30)}...]
-                                        B[Solution: ${solution.title}]
-                                        C[Implementation]
-                                        D[Expected Outcome]
+                                        A["Problem: Vivere in città più semplice"]
+                                        B["Solution: Smart City Hubs"]
+                                        C["Implementation Steps"]
+                                        D["Expected Outcome"]
+                                        style A fill:#f9f9f9,stroke:#666
+                                        style B fill:#e8f0fe,stroke:#4285f4
+                                        style C fill:#f9f9f9,stroke:#666
+                                        style D fill:#f9f9f9,stroke:#666
                                         A --> B
                                         B --> C
                                         C --> D
@@ -1128,8 +1132,8 @@
             
             // Initialize Mermaid with specific configuration
             mermaid.initialize({ 
-                startOnLoad: false,
-                theme: 'neutral',
+                startOnLoad: true,
+                theme: 'default',
                 securityLevel: 'loose',
                 flowchart: {
                     htmlLabels: true,
