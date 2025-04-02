@@ -1128,8 +1128,8 @@
             
             // Initialize Mermaid with specific configuration
             mermaid.initialize({ 
-                startOnLoad: true,
-                theme: 'default',
+                startOnLoad: false,
+                theme: 'neutral',
                 securityLevel: 'loose',
                 flowchart: {
                     htmlLabels: true,
@@ -1144,8 +1144,10 @@
             });
 
             // Force Mermaid to initialize when modal opens
-            solutionModal.addEventListener('shown.bs.modal', function () {
-                mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+            solutionModal.addEventListener('click', function () {
+                setTimeout(() => {
+                    mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+                }, 100);
             });
 
             // Function to render Mermaid diagrams
