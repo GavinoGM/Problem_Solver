@@ -63,17 +63,17 @@ app.post('/api/openai', async (req, res) => {
 
     // Format messages differently for each provider
     const formattedMessages = provider === 'anthropic' ? 
-      req.body.messages.map(msg => ({
-        role: msg.role === 'system' ? 'assistant' : msg.role,
-        content: msg.content
-      })) :
+      [{
+        role: 'user',
+        content: req.body.messages[req.body.messages.length - 1].content
+      }] :
       req.body.messages;
 
     // Add structured context to the prompt
     const requestBody = provider === 'anthropic' ? {
       model: req.body.model,
       messages: formattedMessages,
-      max_tokens: req.body.max_tokens,
+      max_tokens: req.body.max_tokens || 4000,
       temperature: 0.9,
       system: "You are an expert problem-solving assistant that carefully considers all provided context including stakeholders, root causes, and impact assessments to generate unique solutions and insights."
     } : {

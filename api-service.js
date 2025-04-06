@@ -350,13 +350,15 @@ Provide a helpful, concise response that directly addresses the user's request i
     _parseSolutionsResponse(response, problem) {
         try {
             let solutions;
+            let responseText = typeof response === 'string' ? response : 
+                             response.content || response.choices?.[0]?.message?.content;
 
             // Try to parse JSON directly
             try {
-                solutions = JSON.parse(response);
+                solutions = JSON.parse(responseText);
             } catch (e) {
                 // If direct parsing fails, extract JSON from text
-                const jsonMatch = response.match(/\[[\s\S]*\]/);
+                const jsonMatch = responseText.match(/\[[\s\S]*\]/);
                 if (jsonMatch) {
                     solutions = JSON.parse(jsonMatch[0]);
                 } else {
@@ -395,13 +397,15 @@ Provide a helpful, concise response that directly addresses the user's request i
     _parseReframingResponse(response) {
         try {
             let reframes;
+            let responseText = typeof response === 'string' ? response : 
+                             response.content || response.choices?.[0]?.message?.content;
 
             // Try to parse JSON directly
             try {
-                reframes = JSON.parse(response);
+                reframes = JSON.parse(responseText);
             } catch (e) {
                 // If direct parsing fails, extract JSON from text
-                const jsonMatch = response.match(/\[[\s\S]*\]/);
+                const jsonMatch = responseText.match(/\[[\s\S]*\]/);
                 if (jsonMatch) {
                     reframes = JSON.parse(jsonMatch[0]);
                 } else {
