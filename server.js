@@ -52,7 +52,8 @@ app.post('/api/openai', async (req, res) => {
 
     const headers = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
+      'Authorization': `Bearer ${apiKey}`,
+      'anthropic-version': '2023-06-01'
     };
 
     // Add Anthropic specific headers
@@ -82,7 +83,8 @@ app.post('/api/openai', async (req, res) => {
       })),
       system: "You are an expert problem-solving assistant that carefully considers all provided context including stakeholders, root causes, and impact assessments to generate unique solutions and insights.",
       max_tokens: req.body.max_tokens || 4000,
-      temperature: 0.7
+      temperature: 0.7,
+      stream: false
     } : {
       model: req.body.model || 'gpt-4',
       messages: formattedMessages,
