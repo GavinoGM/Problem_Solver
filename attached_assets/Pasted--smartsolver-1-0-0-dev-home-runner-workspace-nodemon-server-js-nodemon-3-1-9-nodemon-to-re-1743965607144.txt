@@ -1,0 +1,81 @@
+
+> smartsolver@1.0.0 dev /home/runner/workspace
+> nodemon server.js
+
+[nodemon] 3.1.9
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,cjs,json
+[nodemon] starting `node server.js`
+Server running on http://0.0.0.0:3000
+OpenAI API key configured: true
+Anthropic API key configured: true
+Processing request with full context: {
+  model: 'claude-3-opus-20240229',
+  provider: 'anthropic',
+  hasStakeholders: false,
+  hasRootCauses: false,
+  hasImpact: false
+}
+Making API request with: {
+  url: 'https://api.anthropic.com/v1/messages',
+  model: 'claude-3-opus-20240229',
+  contextLength: 1645
+}
+API Error: {
+  type: 'error',
+  error: {
+    type: 'invalid_request_error',
+    message: 'messages: Unexpected role "system". The Messages API accepts a top-level `system` parameter, not "system" as an input message role.'
+  }
+}
+Processing request with full context: {
+  model: 'claude-3-opus-20240229',
+  provider: 'anthropic',
+  hasStakeholders: false,
+  hasRootCauses: false,
+  hasImpact: false
+}
+Making API request with: {
+  url: 'https://api.anthropic.com/v1/messages',
+  model: 'claude-3-opus-20240229',
+  contextLength: 1645
+}
+API Error: {
+  type: 'error',
+  error: {
+    type: 'invalid_request_error',
+    message: 'messages: Unexpected role "system". The Messages API accepts a top-level `system` parameter, not "system" as an input message role.'
+  }
+}
+Processing request with full context: {
+  model: 'claude-3-opus-20240229',
+  provider: 'anthropic',
+  hasStakeholders: false,
+  hasRootCauses: false,
+  hasImpact: false
+}
+Making API request with: {
+  url: 'https://api.anthropic.com/v1/messages',
+  model: 'claude-3-opus-20240229',
+  contextLength: 1645
+}
+API Error: {
+  type: 'error',
+  error: {
+    type: 'invalid_request_error',
+    message: 'messages: Unexpected role "system". The Messages API accepts a top-level `system` parameter, not "system" as an input message role.'
+  }
+}
+Processing request with full context: {
+  model: 'gpt-3.5-turbo-16k',
+  provider: 'openai',
+  hasStakeholders: false,
+  hasRootCauses: false,
+  hasImpact: false
+}
+Making API request with: {
+  url: 'https://api.openai.com/v1/chat/completions',
+  model: 'gpt-3.5-turbo-16k',
+  contextLength: 1462
+}
