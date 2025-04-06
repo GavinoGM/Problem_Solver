@@ -4,7 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 // Handle CORS
 app.use(cors());
@@ -22,7 +22,7 @@ app.get('/api/config', (req, res) => {
   res.json({
     apiKeyConfigured: !!process.env.OPENAI_API_KEY,
     apiKeyHint,
-    model: process.env.OPENAI_MODEL || 'gpt-4'
+    model: process.env.OPENAI_MODEL || 'gpt-4o'
   });
 });
 
@@ -103,7 +103,7 @@ app.post('/api/openai', async (req, res) => {
             'anthropic-version': '2023-06-01'
           }
         });
-
+        
         if (modelsResponse.ok) {
           const models = await modelsResponse.json();
           const availableModels = models.data.map(model => model.id);

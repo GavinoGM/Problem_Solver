@@ -982,7 +982,7 @@
                 content += `Problem: ${currentProblem}\n`;
                 content += `Domain: ${domainSelect.value}\n`;
                 content += `Complexity Level: ${currentComplexity}/5\n\n`;
-
+                
                 if (contextCheckbox.checked && contextInput.value) {
                     content += `Context:\n${contextInput.value}\n\n`;
                 }
@@ -997,7 +997,7 @@
                 if (enhancements.length > 0) {
                     content += `Detailed Analysis:\n`;
                     content += `${'-'.repeat(50)}\n\n`;
-
+                    
                     enhancements.forEach(enhancement => {
                         const heading = enhancement.querySelector('h4');
                         if (heading) {
@@ -1005,7 +1005,7 @@
                             // Get all paragraphs, lists, and other content
                             const contentElements = enhancement.querySelectorAll('p, ul, ol');
                             content += `${title}\n${'='.repeat(title.length)}\n`;
-
+                            
                             contentElements.forEach(element => {
                                 if (element.tagName === 'UL' || element.tagName === 'OL') {
                                     // Handle lists
@@ -1052,7 +1052,7 @@
                 content += `Problem: ${currentProblem}\n`;
                 content += `Domain: ${domainSelect.value}\n`;
                 content += `Complexity: ${currentComplexity}/5\n\n`;
-
+                
                 if (contextCheckbox.checked && contextInput.value) {
                     content += `Context:\n${contextInput.value}\n\n`;
                 }
@@ -1192,46 +1192,8 @@
                     }
                 });
 
-                // Function to export a reframe
-                function exportReframe(reframeText, isCustom = false) {
-                    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-                    const filename = `reframe-${timestamp}.txt`;
-
-                    let content = `Problem Reframing Export\n`;
-                    content += `Generated: ${new Date().toLocaleString()}\n\n`;
-                    content += `Original Problem: ${currentProblem}\n`;
-                    content += `Domain: ${domainSelect.value}\n`;
-                    content += `Type: ${isCustom ? 'Custom Reframe' : 'AI-Generated Reframe'}\n\n`;
-                    content += `Reframed Problem:\n${reframeText}\n`;
-
-                    const blob = new Blob([content], { type: 'text/plain' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-
-                    // Show success message
-                    const successMsg = document.createElement('div');
-                    successMsg.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg fade-in';
-                    successMsg.textContent = 'Reframe exported successfully!';
-                    document.body.appendChild(successMsg);
-                    setTimeout(() => successMsg.remove(), 3000);
-                }
-
-                // Add click handlers for solution generation and export from reframes
+                // Add click handlers for solution generation from reframes
                 reframeResults.addEventListener('click', async (e) => {
-                    const exportBtn = e.target.closest('.export-reframe-btn');
-                    if (exportBtn) {
-                        const reframeElement = exportBtn.closest('div').parentElement.querySelector('p');
-                        const reframeText = reframeElement.textContent;
-                        const isCustom = exportBtn.closest('div').querySelector('.edit-reframe') !== null;
-                        exportReframe(reframeText, isCustom);
-                        return;
-                    }
                     const generateBtn = e.target.closest('.generate-solutions-btn');
                     if (generateBtn) {
                         const reframeElement = generateBtn.closest('div').querySelector('p');
@@ -1313,18 +1275,12 @@
                                      style="animation-delay: ${index * 0.1}s">
                                     <div class="flex justify-between items-start">
                                         <p>${reframe}</p>
-                                        <div class="flex items-center gap-2">
-                                            <button class="text-indigo-600 hover:text-indigo-800 generate-solutions-btn" title="Generate solutions for this reframe">
-                                                <i class="fas fa-lightbulb"></i>
-                                            </button>
-                                            <button class="text-indigo-600 hover:text-indigo-800 export-reframe-btn" title="Export this reframe">
-                                                <i class="fas fa-file-export"></i>
-                                            </button>
-                                        </div>
+                                        <button class="text-indigo-600 hover:text-indigo-800 generate-solutions-btn ml-3" title="Generate solutions for this reframe">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </button>
                                     </div>
                                 </div>
                             `).join('')}
-                            <div id="customReframes"></div>
                         </div>
                     `;
                 } catch (error) {
@@ -1343,18 +1299,12 @@
                                 <div class="bg-white p-4 rounded-lg border border-gray-200 fade-in">
                                     <div class="flex justify-between items-start">
                                         <p>${reframe}</p>
-                                        <div class="flex items-center gap-2">
-                                            <button class="text-indigo-600 hover:text-indigo-800 generate-solutions-btn" title="Generate solutions for this reframe">
-                                                <i class="fas fa-lightbulb"></i>
-                                            </button>
-                                            <button class="text-indigo-600 hover:text-indigo-800 export-reframe-btn" title="Export this reframe">
-                                                <i class="fas fa-file-export"></i>
-                                            </button>
-                                        </div>
+                                        <button class="text-indigo-600 hover:text-indigo-800 generate-solutions-btn ml-3" title="Generate solutions for this reframe">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </button>
                                     </div>
                                 </div>
                             `).join('')}
-                            <div id="customReframes"></div>
                         </div>
                     `;
                 } finally {
@@ -1540,7 +1490,7 @@
                 const isAnthropicModel = modelSelect.value.includes('claude');
                 const maxTemp = isAnthropicModel ? 100 : 200; // 1.0 or 2.0
                 temperatureRange.max = maxTemp;
-
+                
                 // Set default value based on model
                 const defaultValue = isAnthropicModel ? 70 : 70; // 0.7 default for both
                 temperatureRange.value = defaultValue;

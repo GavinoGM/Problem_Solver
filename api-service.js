@@ -13,16 +13,11 @@ class ApiService {
         document.addEventListener('DOMContentLoaded', () => {
             const modelSelect = document.getElementById('modelSelect');
             if (modelSelect) {
-                try {
-                    modelSelect.value = this.model;
-                    modelSelect.addEventListener('change', (e) => {
-                        this.model = e.target.value || 'gpt-4';
-                        console.log('Model changed to:', this.model);
-                    });
-                } catch (error) {
-                    console.error('Error setting model:', error);
-                    this.model = 'gpt-4';
-                }
+                modelSelect.value = this.model;
+                modelSelect.addEventListener('change', (e) => {
+                    this.model = e.target.value;
+                    console.log('Model changed to:', this.model);
+                });
             }
         });
     }
