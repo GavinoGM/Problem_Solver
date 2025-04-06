@@ -50,13 +50,28 @@ app.post('/api/openai', async (req, res) => {
       ? 'https://api.anthropic.com/v1/messages'
       : 'https://api.openai.com/v1/chat/completions';
       
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    };
+
+    // Add Anthropic specific headers
+    if (provider === 'anthropic') {
+      headers['x-api-key'] = apiKey;
+      headers['anthropic-version'] = '2023-06-01';
+    }
+
     const response = await fetch(apiUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify(req.body)
+      headers: headers,
+      body: JSON.stringify(provider === 'anthropic' ? {
+        model: req.body.model,
+        messages: req.body.messages.map(msg => ({
+          role: msg.role === 'system' ? 'assistant' : msg.role,
+          content: msg.content
+        })),
+        max_tokens: req.body.max_tokens
+      } : req.body)
     });
 
     const data = await response.json();
