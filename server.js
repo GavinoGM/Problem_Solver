@@ -22,7 +22,7 @@ app.get('/api/config', (req, res) => {
   res.json({
     apiKeyConfigured: !!process.env.OPENAI_API_KEY,
     apiKeyHint,
-    model: process.env.OPENAI_MODEL || 'gpt-4o'
+    model: process.env.OPENAI_MODEL || 'gpt-4'
   });
 });
 
