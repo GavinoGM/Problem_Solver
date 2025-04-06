@@ -198,12 +198,20 @@ class ApiService {
      * @private
      */
     _buildSolutionPrompt(problem, domain, complexity, context) {
+        // Get values from optional input fields
+        const stakeholders = document.getElementById('stakeholders')?.value.trim();
+        const rootCauses = document.getElementById('rootCauses')?.value.trim();
+        const impactAssessment = document.getElementById('impactAssessment')?.value.trim();
+
         return `Generate 3 innovative solutions for the following problem:
         
 Problem: "${problem}"
 Domain: ${domain}
 Complexity: ${complexity}/5
 ${context ? `Additional Context: ${context}` : ''}
+${stakeholders ? `\nStakeholders: ${stakeholders}` : ''}
+${rootCauses ? `\nRoot Causes: ${rootCauses}` : ''}
+${impactAssessment ? `\nImpact Assessment: ${impactAssessment}` : ''}
 
 For each solution, provide:
 1. A title that captures the essence of the approach
@@ -234,11 +242,19 @@ Be creative, practical, and ensure the solutions are genuinely useful for solvin
      * @private
      */
     _buildReframingPrompt(problem, domain, context = '') {
+        // Get values from optional input fields
+        const stakeholders = document.getElementById('stakeholders')?.value.trim();
+        const rootCauses = document.getElementById('rootCauses')?.value.trim();
+        const impactAssessment = document.getElementById('impactAssessment')?.value.trim();
+
         return `Reframe the following problem in 3 different innovative ways to help uncover new perspectives and solutions:
 
 Problem: "${problem}"
 Domain: ${domain}
 ${context ? `Additional Context: ${context}` : ''}
+${stakeholders ? `\nStakeholders: ${stakeholders}` : ''}
+${rootCauses ? `\nRoot Causes: ${rootCauses}` : ''}
+${impactAssessment ? `\nImpact Assessment: ${impactAssessment}` : ''}
 
 For each reframing:
 1. Use a different cognitive technique (e.g., inverse thinking, first principles, analogy, constraint addition/removal)
