@@ -126,7 +126,7 @@ app.post('/api/openai', async (req, res) => {
       })),
       system: "You are an expert problem-solving assistant that carefully considers all provided context including stakeholders, root causes, and impact assessments to generate unique solutions and insights. Always analyze and incorporate any additional context provided in the messages.",
       max_tokens: 4000,
-      temperature: 0.7,
+      temperature: Math.min(req.body.temperature || 0.7, 1.0), // Ensure Anthropic temperature is capped at 1.0
       stream: false
     } : {
       model: req.body.model || 'gpt-4',
