@@ -202,8 +202,11 @@ class ApiService {
         const stakeholders = document.getElementById('stakeholders')?.value.trim();
         const rootCauses = document.getElementById('rootCauses')?.value.trim();
         const impactAssessment = document.getElementById('impactAssessment')?.value.trim();
+        
+        // Add timestamp for uniqueness
+        const timestamp = Date.now();
 
-        return `Generate 3 innovative solutions for the following problem:
+        return `At timestamp ${timestamp}, generate 3 completely new and innovative solutions for the following problem, heavily incorporating ALL provided context and analysis:
         
 Problem: "${problem}"
 Domain: ${domain}
@@ -247,7 +250,10 @@ Be creative, practical, and ensure the solutions are genuinely useful for solvin
         const rootCauses = document.getElementById('rootCauses')?.value.trim();
         const impactAssessment = document.getElementById('impactAssessment')?.value.trim();
 
-        return `Given this problem, generate 3 radically different perspective shifts using distinct cognitive frameworks:
+        // Add timestamp to ensure uniqueness
+        const timestamp = Date.now();
+
+        return `Given this problem and timestamp ${timestamp}, generate 3 completely new and radically different perspective shifts. Each reframe must be unique and never previously generated:
 
 Problem: "${problem}"
 Domain: ${domain}
