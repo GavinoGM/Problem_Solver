@@ -351,7 +351,7 @@ Provide a helpful, concise response that directly addresses the user's request i
         try {
             let solutions;
             let responseText = typeof response === 'string' ? response : 
-                             response.content || response.choices?.[0]?.message?.content;
+                             response.content || response.choices?.[0]?.message?.content || response.messages?.[0]?.content;
 
             // Try to parse JSON directly
             try {
@@ -398,7 +398,7 @@ Provide a helpful, concise response that directly addresses the user's request i
         try {
             let reframes;
             let responseText = typeof response === 'string' ? response : 
-                             response.content || response.choices?.[0]?.message?.content;
+                             response.content || response.choices?.[0]?.message?.content || response.messages?.[0]?.content;
 
             // Try to parse JSON directly
             try {

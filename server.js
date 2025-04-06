@@ -72,10 +72,12 @@ app.post('/api/openai', async (req, res) => {
     // Add structured context to the prompt
     const requestBody = provider === 'anthropic' ? {
       model: req.body.model,
-      messages: formattedMessages,
+      messages: [{
+        role: 'assistant',
+        content: "I am an expert problem-solving assistant that carefully considers all provided context including stakeholders, root causes, and impact assessments to generate unique solutions and insights."
+      }, ...formattedMessages],
       max_tokens: req.body.max_tokens || 4000,
-      temperature: 0.9,
-      system: "You are an expert problem-solving assistant that carefully considers all provided context including stakeholders, root causes, and impact assessments to generate unique solutions and insights."
+      temperature: 0.9
     } : {
       model: req.body.model || 'gpt-4',
       messages: formattedMessages,
@@ -100,7 +102,22 @@ app.post('/api/openai', async (req, res) => {
     const data = await response.json();
     
     if (!response.ok) {
-      return res.status(response.status).json(data);
+      console.error('API Error:', data);
+      return res.status(response.status).json({
+        error: data.error || 'API request failed',
+        detail: data.error?.message || data.error?.type || 'Unknown error'
+      });
+    }
+    
+    // Transform Anthropic response to match OpenAI format
+    if (provider === 'anthropic' && data.content) {
+      return res.json({
+        choices: [{
+          message: {
+            content: data.content
+          }
+        }]
+      });
     }
     
     return res.json(data);
