@@ -247,7 +247,7 @@ Be creative, practical, and ensure the solutions are genuinely useful for solvin
         const rootCauses = document.getElementById('rootCauses')?.value.trim();
         const impactAssessment = document.getElementById('impactAssessment')?.value.trim();
 
-        return `Given this problem, generate 3 unique and innovative reframings that offer completely different perspectives:
+        return `Given this problem, generate 3 radically different perspective shifts using distinct cognitive frameworks:
 
 Problem: "${problem}"
 Domain: ${domain}
@@ -256,21 +256,19 @@ ${stakeholders ? `\nStakeholders: ${stakeholders}` : ''}
 ${rootCauses ? `\nRoot Causes: ${rootCauses}` : ''}
 ${impactAssessment ? `\nImpact Assessment: ${impactAssessment}` : ''}
 
-Apply these distinct cognitive techniques:
-1. First reframe: Use inverse thinking or paradoxical intention
-2. Second reframe: Apply first principles analysis
-3. Third reframe: Employ analogical thinking or metaphorical reframing
+Use exactly one of these approaches for each reframe (no repeating):
+1. Inversion/Contradiction: What if the opposite was true? What if we wanted the problem to get worse?
+2. Systems Thinking: How does this problem connect to larger systems? What feedback loops exist?
+3. Random Association: Connect this problem to a completely different domain or natural phenomenon
 
-Make each reframing:
-- Substantially different from the others
-- Provocative and insight-generating
-- Actionable and solution-oriented
-- Considerate of the provided context and stakeholders
+Requirements for each reframe:
+- Must challenge core assumptions of the original problem
+- Must open up entirely new solution possibilities 
+- Must incorporate relevant stakeholder perspectives and context
+- Must be specific and actionable, not abstract
 
-Return the reframings as an array of strings in JSON format:
-["Inverse thinking reframe", "First principles reframe", "Analogical reframe"]
-
-Each reframe must lead to a unique solution space.`;
+Format response as JSON array with 3 strings, each using a different approach:
+["Inversion perspective: ...", "Systems perspective: ...", "Random association perspective: ..."]`;
     }
 
     /**
