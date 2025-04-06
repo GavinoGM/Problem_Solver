@@ -156,6 +156,9 @@ class ApiService {
         }
         
         // Use server proxy to avoid CORS and hide API key
+        // Log which model is being used
+        console.log('Using AI model:', this.model);
+        
         const response = await fetch('/api/openai', {
             method: 'POST',
             headers: {
@@ -168,7 +171,8 @@ class ApiService {
                     { role: 'user', content: prompt }
                 ],
                 temperature: 0.7,
-                max_tokens: 1000
+                max_tokens: 1000,
+                provider: this.model.startsWith('claude') ? 'anthropic' : 'openai'
             })
         });
 
