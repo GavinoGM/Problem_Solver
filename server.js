@@ -18,7 +18,7 @@ app.get('/api/config', (req, res) => {
   const apiKeyHint = process.env.OPENAI_API_KEY 
     ? `${process.env.OPENAI_API_KEY.substring(0, 3)}...${process.env.OPENAI_API_KEY.substring(process.env.OPENAI_API_KEY.length - 4)}` 
     : null;
-    
+
   res.json({
     apiKeyConfigured: !!process.env.OPENAI_API_KEY,
     apiKeyHint,
@@ -32,7 +32,7 @@ app.use(express.json());
 app.post('/api/openai', async (req, res) => {
   const provider = req.body.provider || 'openai';
   const apiKey = provider === 'anthropic' ? process.env.ANTHROPIC_API_KEY : process.env.OPENAI_API_KEY;
-  
+
   console.log('Processing request with full context:', {
     model: req.body.model,
     provider,
@@ -40,7 +40,7 @@ app.post('/api/openai', async (req, res) => {
     hasRootCauses: req.body.messages[1].content.includes('Root Causes:'),
     hasImpact: req.body.messages[1].content.includes('Impact Assessment:')
   });
-  
+
   if (!apiKey) {
     return res.status(500).json({ error: `${provider.toUpperCase()} API key not configured` });
   }
@@ -49,7 +49,7 @@ app.post('/api/openai', async (req, res) => {
     const apiUrl = provider === 'anthropic' 
       ? 'https://api.anthropic.com/v1/messages'
       : 'https://api.openai.com/v1/chat/completions';
-      
+
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${apiKey}`
@@ -75,14 +75,12 @@ app.post('/api/openai', async (req, res) => {
 
     // Add structured context to the prompt
     const requestBody = provider === 'anthropic' ? {
-      model: req.body.model.replace('claude-3-', 'claude-3-'),
-      messages: [{
-        role: 'system',
-        content: "You are an expert problem-solving assistant that carefully considers all provided context including stakeholders, root causes, and impact assessments to generate unique solutions and insights."
-      }, ...formattedMessages.map(msg => ({
-        role: msg.role === 'system' ? 'assistant' : msg.role,
+      model: req.body.model,
+      messages: formattedMessages.map(msg => ({
+        role: msg.role === 'system' ? 'assistant' : 'user',
         content: msg.content
-      }))],
+      })),
+      system: "You are an expert problem-solving assistant that carefully considers all provided context including stakeholders, root causes, and impact assessments to generate unique solutions and insights.",
       max_tokens: req.body.max_tokens || 4000,
       temperature: 0.7
     } : {
@@ -107,10 +105,10 @@ app.post('/api/openai', async (req, res) => {
     });
 
     const data = await response.json();
-    
+
     if (!response.ok) {
       console.error('API Error:', data);
-      
+
       // If Anthropic fails due to credits, fallback to OpenAI
       if (provider === 'anthropic' && data.error?.message?.includes('credit balance')) {
         console.log('Falling back to OpenAI GPT-4...');
@@ -118,13 +116,13 @@ app.post('/api/openai', async (req, res) => {
         req.body.model = 'gpt-4';
         return await handleAPIRequest(req, res);
       }
-      
+
       return res.status(response.status).json({
         error: data.error || 'API request failed',
         detail: data.error?.message || data.error?.type || 'Unknown error'
       });
     }
-    
+
     // Transform Anthropic response to match OpenAI format
     if (provider === 'anthropic' && data.content) {
       return res.json({
@@ -135,7 +133,7 @@ app.post('/api/openai', async (req, res) => {
         }]
       });
     }
-    
+
     return res.json(data);
   } catch (error) {
     console.error('Error calling OpenAI API:', error);
