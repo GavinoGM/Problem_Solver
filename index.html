@@ -981,8 +981,10 @@
                             try {
                                 // Generate solutions based on the reframed problem
                                 const contextText = contextCheckbox.checked ? contextInput.value.trim() : '';
-                                currentSolutions = await generateAISolutions(reframedProblem, currentDomain, currentComplexity, contextText);
+                                const newSolutions = await generateAISolutions(reframedProblem, currentDomain, currentComplexity, contextText);
 
+                                // Append new solutions to existing ones
+                                currentSolutions = [...currentSolutions, ...newSolutions];
                                 usedSolutionTitles = currentSolutions.map(s => s.title);
                                 displayedSolutions = [...currentSolutions];
 
@@ -1041,8 +1043,10 @@
                         try {
                             // Generate solutions based on the reframed problem
                             const contextText = contextCheckbox.checked ? contextInput.value.trim() : '';
-                            currentSolutions = await generateAISolutions(reframedProblem, currentDomain, currentComplexity, contextText);
+                            const newSolutions = await generateAISolutions(reframedProblem, currentDomain, currentComplexity, contextText);
 
+                            // Append new solutions to existing ones
+                            currentSolutions = [...currentSolutions, ...newSolutions];
                             usedSolutionTitles = currentSolutions.map(s => s.title);
                             displayedSolutions = [...currentSolutions];
 
