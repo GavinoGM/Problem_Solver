@@ -29,11 +29,6 @@
             position: relative;
             overflow: hidden;
         }
-
-                    <button id="openSettingsBtn" class="ml-3 text-sm bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1 rounded-full transition">
-                        <i class="fas fa-cog mr-1"></i> AI Settings
-                    </button>
-
         .solution-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -83,44 +78,6 @@
 
         <!-- Problem Input Section -->
         <div class="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-gray-100 relative overflow-hidden">
-
-        <!-- AI Model Settings Modal -->
-        <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-gray-800">AI Model Settings</h3>
-                        <button id="closeSettingsBtn" class="text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">AI Provider</label>
-                            <select id="providerSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                                <option value="openai">OpenAI</option>
-                                <option value="anthropic">Anthropic</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Model</label>
-                            <select id="modelSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                                <!-- Options will be populated by JavaScript -->
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 flex justify-end">
-                        <button id="saveSettingsBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-                            Save Settings
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
             <div class="ai-float text-indigo-200">
                 <i class="fas fa-brain"></i>
             </div>
@@ -588,63 +545,6 @@
                                 <p class="text-sm text-gray-700 mb-2">Identify all parties affected by or involved in this problem</p>
                                 <div id="stakeholdersInput" class="hidden mt-3">
                                     <textarea id="stakeholders" class="w-full px-3 py-2 text-sm border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" 
-
-            // Settings modal
-            const settingsModal = document.getElementById('settingsModal');
-            const openSettingsBtn = document.getElementById('openSettingsBtn');
-            const closeSettingsBtn = document.getElementById('closeSettingsBtn');
-            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-            const providerSelect = document.getElementById('providerSelect');
-            const modelSelect = document.getElementById('modelSelect');
-
-            // Initialize settings handlers
-            function initializeSettings() {
-                openSettingsBtn.addEventListener('click', openSettingsModal);
-                closeSettingsBtn.addEventListener('click', closeSettingsModal);
-                saveSettingsBtn.addEventListener('click', saveSettings);
-                providerSelect.addEventListener('change', updateModelOptions);
-
-                // Set initial values
-                providerSelect.value = apiService.provider;
-                updateModelOptions();
-            }
-
-            function updateModelOptions() {
-                const provider = providerSelect.value;
-                const models = apiService.models[provider];
-                
-                modelSelect.innerHTML = models.map(model => 
-                    `<option value="${model}" ${model === apiService.model ? 'selected' : ''}>${model}</option>`
-                ).join('');
-            }
-
-            function openSettingsModal() {
-                settingsModal.classList.remove('hidden');
-            }
-
-            function closeSettingsModal() {
-                settingsModal.classList.add('hidden');
-            }
-
-            async function saveSettings() {
-                apiService.provider = providerSelect.value;
-                apiService.model = modelSelect.value;
-                closeSettingsModal();
-                
-                // Show success message
-                const successMsg = document.createElement('div');
-                successMsg.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg fade-in';
-                successMsg.textContent = 'AI settings saved successfully!';
-                document.body.appendChild(successMsg);
-                setTimeout(() => successMsg.remove(), 3000);
-            }
-
-            // Add settings initialization to main initialize function
-            initialize = () => {
-                // Existing initialization code...
-                initializeSettings();
-            };
-
                                         rows="2" placeholder="List key stakeholders affected by this problem..."></textarea>
                                 </div>
                             </div>
