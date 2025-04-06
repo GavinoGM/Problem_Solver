@@ -354,18 +354,6 @@
     <script type="module">
         import apiService from './api-service.js';
 
-        function exportReframe(button) {
-            const reframeText = button.closest('.flex').querySelector('p').textContent;
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-            const blob = new Blob([reframeText], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = `reframed_problem_${timestamp}.txt`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
             // DOM elements
             const problemInput = document.getElementById('problemInput');
@@ -1142,9 +1130,6 @@
                                     <button class="text-gray-400 hover:text-gray-600 edit-reframe">
                                         <i class="fas fa-pencil-alt"></i>
                                     </button>
-                                    <button class="export-btn text-green-600 hover:text-green-800" onclick="exportReframe(this)" title="Export this reframe">
-                                        <i class="fas fa-file-export"></i>
-                                    </button>
                                 </div>
                             </div>
                         `;
@@ -1290,14 +1275,9 @@
                                      style="animation-delay: ${index * 0.1}s">
                                     <div class="flex justify-between items-start">
                                         <p>${reframe}</p>
-                                        <div class="flex items-center gap-2">
-                                            <button class="text-indigo-600 hover:text-indigo-800 generate-solutions-btn" title="Generate solutions for this reframe">
-                                                <i class="fas fa-lightbulb"></i>
-                                            </button>
-                                            <button class="export-btn text-green-600 hover:text-green-800" onclick="exportReframe(this)" title="Export this reframe">
-                                                <i class="fas fa-file-export"></i>
-                                            </button>
-                                        </div>
+                                        <button class="text-indigo-600 hover:text-indigo-800 generate-solutions-btn ml-3" title="Generate solutions for this reframe">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </button>
                                     </div>
                                 </div>
                             `).join('')}
