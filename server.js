@@ -103,7 +103,7 @@ app.post('/api/openai', async (req, res) => {
             'anthropic-version': '2023-06-01'
           }
         });
-        
+
         if (modelsResponse.ok) {
           const models = await modelsResponse.json();
           const availableModels = models.data.map(model => model.id);
