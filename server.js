@@ -124,8 +124,9 @@ app.post('/api/openai', async (req, res) => {
         role: msg.role === 'system' ? 'assistant' : 'user',
         content: msg.content
       })),
-      system: "You are an expert problem-solving assistant that carefully considers all provided context including stakeholders, root causes, and impact assessments to generate unique solutions and insights.",
+      system: "You are an expert problem-solving assistant that carefully considers all provided context including stakeholders, root causes, and impact assessments to generate unique solutions and insights. Always analyze and incorporate any additional context provided in the messages.",
       max_tokens: 4000,
+      temperature: 0.7,
       stream: false
     } : {
       model: req.body.model || 'gpt-4',
