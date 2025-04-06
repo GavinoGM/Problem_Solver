@@ -87,9 +87,34 @@ app.post('/api/openai', async (req, res) => {
       if (modelName.includes('opus')) {
         finalModelName = 'claude-3-opus-20240229'; // Keep Opus as is since it's working
       } else if (modelName.includes('sonnet')) {
-        finalModelName = 'claude-3-sonnet-20240229';
+        finalModelName = 'claude-3-sonnet'; // Use base model name
       } else if (modelName.includes('haiku')) {
-        finalModelName = 'claude-3-haiku-20240229';
+        finalModelName = 'claude-3-haiku'; // Use base model name
+      }
+    }
+
+    // Check available models for Anthropic (except Opus which we know works)
+    if (provider === 'anthropic' && !modelName.includes('opus')) {
+      try {
+        const modelsResponse = await fetch('https://api.anthropic.com/v1/models', {
+          method: 'GET',
+          headers: {
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01'
+          }
+        });
+        
+        if (modelsResponse.ok) {
+          const models = await modelsResponse.json();
+          const availableModels = models.data.map(model => model.id);
+          if (!availableModels.includes(finalModelName)) {
+            console.log('Model not available:', finalModelName);
+            console.log('Available models:', availableModels);
+            throw new Error(`Model ${finalModelName} not available`);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking available models:', error);
       }
     }
 
