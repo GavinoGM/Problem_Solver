@@ -922,15 +922,35 @@
                 content += `Title: ${currentOpenSolution.title}\n\n`;
                 content += `Description:\n${currentOpenSolution.content}\n\n`;
 
-                // Add any generated enhancements
+                // Add all enhancements in a structured way
                 const enhancements = modalContent.querySelectorAll('.bg-blue-50, .bg-green-50, .bg-purple-50, .bg-yellow-50');
                 if (enhancements.length > 0) {
-                    content += `Additional Insights:\n`;
+                    content += `Detailed Analysis:\n`;
                     content += `${'-'.repeat(50)}\n\n`;
+                    
                     enhancements.forEach(enhancement => {
-                        const title = enhancement.querySelector('h4').textContent;
-                        const text = enhancement.querySelector('p, ul, ol').textContent;
-                        content += `${title}\n${text}\n\n`;
+                        const heading = enhancement.querySelector('h4');
+                        if (heading) {
+                            const title = heading.textContent.trim();
+                            // Get all paragraphs, lists, and other content
+                            const contentElements = enhancement.querySelectorAll('p, ul, ol');
+                            content += `${title}\n${'='.repeat(title.length)}\n`;
+                            
+                            contentElements.forEach(element => {
+                                if (element.tagName === 'UL' || element.tagName === 'OL') {
+                                    // Handle lists
+                                    const items = element.querySelectorAll('li');
+                                    items.forEach((item, index) => {
+                                        content += `${index + 1}. ${item.textContent.trim()}\n`;
+                                    });
+                                } else {
+                                    // Handle paragraphs and other text
+                                    content += `${element.textContent.trim()}\n`;
+                                }
+                                content += '\n';
+                            });
+                            content += '\n';
+                        }
                     });
                 }
 
