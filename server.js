@@ -74,15 +74,9 @@ app.post('/api/openai', async (req, res) => {
       formattedMessages = req.body.messages;
     }
 
-    // Format model name for Anthropic API
-    let modelName = req.body.model;
-    if (provider === 'anthropic' && modelName.includes('-20240229')) {
-      modelName = modelName.replace('-20240229', '');
-    }
-
     // Add structured context to the prompt
     const requestBody = provider === 'anthropic' ? {
-      model: modelName,
+      model: req.body.model,
       messages: [{
         role: 'user',
         content: formattedMessages[formattedMessages.length - 1].content
