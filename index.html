@@ -436,42 +436,54 @@
                     return;
                 }
 
+                // Show loading state
+                analyzeBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Analyzing...';
+                analyzeBtn.disabled = true;
+
+                // Show problem section
+                problemSection.classList.remove('hidden');
+                problemBreakdown.innerHTML = `
+                    <div class="p-4 bg-gray-50 rounded-lg text-center text-gray-500">
+                        <i class="fas fa-circle-notch fa-spin mr-2"></i> Analyzing your problem...
+                    </div>
+                `;
+
+                // Hide solutions section temporarily
+                solutionsSection.classList.add('hidden');
+
+                // Display problem breakdown
+                displayProblemBreakdown(currentProblem, currentDomain);
+
+                // Add event listeners to the toggle buttons after the problem breakdown is displayed
+                setTimeout(() => {
+                    document.querySelectorAll('.toggle-extra-input').forEach(btn => {
+                        btn.addEventListener('click', toggleExtraInput);
+                    });
+                }, 100);
+
+                // Show AI reframing section
+                aiReframingSection.classList.remove('hidden');
+
                 try {
-                    // Show loading state
-                    analyzeBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Analyzing...';
-                    analyzeBtn.disabled = true;
-
-                    // Show problem section
-                    problemSection.classList.remove('hidden');
-                    problemBreakdown.innerHTML = `
-                        <div class="p-4 bg-gray-50 rounded-lg text-center text-gray-500">
-                            <i class="fas fa-circle-notch fa-spin mr-2"></i> Analyzing your problem...
-                        </div>
-                    `;
-
-                    // Hide solutions section temporarily
-                    solutionsSection.classList.add('hidden');
-
-                    // Display problem breakdown
-                    displayProblemBreakdown(currentProblem, currentDomain);
-
-                    // Show AI reframing section
-                    aiReframingSection.classList.remove('hidden');
-
-                    // Generate initial reframes
+                    // Only generate reframes initially
                     await reframeProblem();
-
+                } catch (error) {
+                    handleApiError(error, () => {
+                        // Show error message to user
+                        solutionDirections.innerHTML = `
+                            <div class="md:col-span-2 flex flex-col items-center justify-center py-10 text-red-500">
+                                <i class="fas fa-exclamation-circle text-3xl mb-3"></i>
+                                <p>Unable to connect to AI service. Please check your connection and try again.</p>
+                            </div>
+                        `;
+                    });
+                } finally {
                     // Reset button state
                     analyzeBtn.innerHTML = '<i class="fas fa-analytics mr-2"></i> Analyze Problem';
                     analyzeBtn.disabled = false;
 
                     // Show solutions section
                     solutionsSection.classList.remove('hidden');
-                } catch (error) {
-                    console.error('Error in analyzeProblem:', error);
-                    analyzeBtn.innerHTML = '<i class="fas fa-analytics mr-2"></i> Analyze Problem';
-                    analyzeBtn.disabled = false;
-                    alert('There was an error analyzing your problem. Please try again.');
                 }
             }
 
@@ -623,7 +635,7 @@
                         {
                             icon: 'fas fa-brain',
                             title: 'Creative Framework 1',
-                            content: `My analysis suggests a paradoxical approach might work best for`"${problem}". Try identifying and amplifying the existing problem to reveal underlying patterns.`,
+                            content: `My analysis suggests a paradoxical approach might work best for "${problem}". Try identifying and amplifying the existing problem to reveal underlying patterns.`,
                             isAI: true
                         }
                     ];
@@ -900,7 +912,7 @@
                 content += `Problem: ${currentProblem}\n`;
                 content += `Domain: ${domainSelect.value}\n`;
                 content += `Complexity Level: ${currentComplexity}/5\n\n`;
-
+                
                 if (contextCheckbox.checked && contextInput.value) {
                     content += `Context:\n${contextInput.value}\n\n`;
                 }
@@ -968,7 +980,7 @@
                 content += `Problem: ${currentProblem}\n`;
                 content += `Domain: ${domainSelect.value}\n`;
                 content += `Complexity: ${currentComplexity}/5\n\n`;
-
+                
                 if (contextCheckbox.checked && contextInput.value) {
                     content += `Context:\n${contextInput.value}\n\n`;
                 }
