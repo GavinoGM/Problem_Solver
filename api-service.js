@@ -247,7 +247,7 @@ Be creative, practical, and ensure the solutions are genuinely useful for solvin
         const rootCauses = document.getElementById('rootCauses')?.value.trim();
         const impactAssessment = document.getElementById('impactAssessment')?.value.trim();
 
-        return `Reframe the following problem in 3 different innovative ways to help uncover new perspectives and solutions:
+        return `Given this problem, generate 3 unique and innovative reframings that offer completely different perspectives:
 
 Problem: "${problem}"
 Domain: ${domain}
@@ -256,16 +256,21 @@ ${stakeholders ? `\nStakeholders: ${stakeholders}` : ''}
 ${rootCauses ? `\nRoot Causes: ${rootCauses}` : ''}
 ${impactAssessment ? `\nImpact Assessment: ${impactAssessment}` : ''}
 
-For each reframing:
-1. Use a different cognitive technique (e.g., inverse thinking, first principles, analogy, constraint addition/removal)
-2. Make sure the reframing opens up new solution spaces or angles
-3. Keep the reframing concise but insightful (1-2 sentences)
-4. Consider the additional context provided, if any
+Apply these distinct cognitive techniques:
+1. First reframe: Use inverse thinking or paradoxical intention
+2. Second reframe: Apply first principles analysis
+3. Third reframe: Employ analogical thinking or metaphorical reframing
+
+Make each reframing:
+- Substantially different from the others
+- Provocative and insight-generating
+- Actionable and solution-oriented
+- Considerate of the provided context and stakeholders
 
 Return the reframings as an array of strings in JSON format:
-["Reframing 1", "Reframing 2", "Reframing 3"]
+["Inverse thinking reframe", "First principles reframe", "Analogical reframe"]
 
-Each reframing should be complete and coherent on its own.`;
+Each reframe must lead to a unique solution space.`;
     }
 
     /**
