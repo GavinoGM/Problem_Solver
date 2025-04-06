@@ -33,6 +33,14 @@ app.post('/api/openai', async (req, res) => {
   const provider = req.body.provider || 'openai';
   const apiKey = provider === 'anthropic' ? process.env.ANTHROPIC_API_KEY : process.env.OPENAI_API_KEY;
   
+  console.log('Processing request with full context:', {
+    model: req.body.model,
+    provider,
+    hasStakeholders: req.body.messages[1].content.includes('Stakeholders:'),
+    hasRootCauses: req.body.messages[1].content.includes('Root Causes:'),
+    hasImpact: req.body.messages[1].content.includes('Impact Assessment:')
+  });
+  
   if (!apiKey) {
     return res.status(500).json({ error: `${provider.toUpperCase()} API key not configured` });
   }

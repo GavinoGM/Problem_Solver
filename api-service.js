@@ -167,7 +167,7 @@ class ApiService {
             body: JSON.stringify({
                 model: this.model,
                 messages: [
-                    { role: 'system', content: 'You are an expert problem-solving assistant. Your responses should be helpful, innovative, and directly address the user\'s problem with actionable insights.' },
+                    { role: 'system', content: 'You are an expert problem-solving assistant. Analyze all provided context including stakeholders, root causes, and impact assessments to provide comprehensive, targeted solutions.' },
                     { role: 'user', content: prompt }
                 ],
                 temperature: 0.7,
