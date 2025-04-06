@@ -171,8 +171,11 @@ class ApiService {
                     { role: 'user', content: prompt }
                 ],
                 temperature: 0.7,
-                max_tokens: 1000,
-                provider: this.model.startsWith('claude') ? 'anthropic' : 'openai'
+                max_tokens: this.model.includes('16k') ? 16000 : 4000,
+                provider: this.model.startsWith('claude') ? 'anthropic' : 'openai',
+                model_family: this.model.startsWith('claude-3') ? 'claude-3' : 
+                            this.model.startsWith('claude') ? 'claude' : 
+                            this.model.startsWith('gpt-4') ? 'gpt-4' : 'gpt-3.5'
             })
         });
 
