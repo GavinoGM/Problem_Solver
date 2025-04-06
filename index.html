@@ -922,31 +922,13 @@
                 content += `Title: ${currentOpenSolution.title}\n\n`;
                 content += `Description:\n${currentOpenSolution.content}\n\n`;
 
-                // Add all AI responses and enhancements
-                const allModalContent = modalContent.querySelectorAll('.bg-blue-50, .bg-green-50, .bg-purple-50, .bg-yellow-50, .bg-white.rounded-lg.p-3.border');
-                if (allModalContent.length > 0) {
-                    content += `Additional Content:\n`;
+                // Add any generated enhancements
+                const enhancements = modalContent.querySelectorAll('.bg-blue-50, .bg-green-50, .bg-purple-50, .bg-yellow-50');
+                if (enhancements.length > 0) {
+                    content += `Additional Insights:\n`;
                     content += `${'-'.repeat(50)}\n\n`;
-                    allModalContent.forEach(element => {
-                        const title = element.querySelector('h4, .text-xs')?.textContent || 'Enhancement';
-                        const text = element.querySelector('p, ul, ol')?.textContent || '';
-                        content += `${title}\n${text}\n\n`;
-                    });
-                }
-
-                // Add custom prompts and responses
-                const customPrompts = modalContent.querySelectorAll('.bg-indigo-50.rounded-lg');
-                if (customPrompts.length > 0) {
-                    content += `Custom Prompts and Responses:\n`;
-                    content += `${'-'.repeat(50)}\n\n`;
-                    customPrompts.forEach(prompt => {
-                        const promptText = prompt.querySelector('p')?.textContent || '';
-                        const response = prompt.nextElementSibling?.querySelector('p')?.textContent || '';
-                        if (promptText && response) {
-                            content += `Q: ${promptText}\nA: ${response}\n\n`;
-                        }
-                    });
-                }
+                    enhancements.forEach(enhancement => {
+                        const title = enhancement.querySelector('h4').textContent;
                         const text = enhancement.querySelector('p, ul, ol').textContent;
                         content += `${title}\n${text}\n\n`;
                     });
