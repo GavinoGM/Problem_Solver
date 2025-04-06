@@ -725,12 +725,30 @@
                                 <div class="flex-1">
                                     <h3 class="font-bold text-gray-800 mb-2">${solution.title}</h3>
                                     <p class="text-gray-600 mb-3 text-sm line-clamp-2">${solution.content}</p>
-                                    <span class="inline-block bg-indigo-50 text-indigo-600 text-xs px-2 py-1 rounded">
-                                        AI-Generated
-                                    </span>
+                                    <div class="flex justify-between items-center">
+                                        <span class="inline-block bg-indigo-50 text-indigo-600 text-xs px-2 py-1 rounded">
+                                            AI-Generated
+                                        </span>
+                                        <button class="delete-solution-btn text-red-500 hover:text-red-700 text-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         `;
+
+                    // Add delete handler
+                    const deleteBtn = solutionEl.querySelector('.delete-solution-btn');
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent opening the modal
+                        const solutionIndex = displayedSolutions.indexOf(solution);
+                        if (solutionIndex > -1) {
+                            displayedSolutions.splice(solutionIndex, 1);
+                            currentSolutions.splice(solutionIndex, 1);
+                            updateSolutionDisplay();
+                            updateSolutionCounter();
+                        }
+                    });
                     } else {
                         solutionEl.innerHTML = `
                             <div class="flex items-start">
@@ -948,10 +966,8 @@
                         generateBtn.addEventListener('click', async () => {
                             const reframedProblem = customReframe;
 
-                            // Clear previous solutions
-                            currentSolutions = [];
-                            displayedSolutions = [];
-                            usedSolutionTitles = [];
+                            // Keep existing solutions and append new ones
+                            const contextText = contextCheckbox.checked ? contextInput.value.trim() : '';
 
                             // Update UI to show loading
                             solutionsSection.classList.remove('hidden');
