@@ -7,6 +7,18 @@ class ApiService {
         this.config = null;
         this.configPromise = this._loadConfig();
         this.model = 'gpt-4'; // Default model
+        this.temperature = 0.7; // Default temperature
+
+        // Add temperature control handler
+        document.addEventListener('DOMContentLoaded', () => {
+            const temperatureControl = document.getElementById('temperatureControl');
+            const temperatureValue = document.getElementById('temperatureValue');
+            if (temperatureControl && temperatureValue) {
+                temperatureControl.addEventListener('input', (e) => {
+                    this.temperature = Number(e.target.value) / 100;
+                    temperatureValue.textContent = this.temperature.toFixed(2);
+                });
+            }
         this.retryCount = 3; // Number of retry attempts
 
         // Add model selection handler
