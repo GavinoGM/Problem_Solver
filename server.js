@@ -77,13 +77,12 @@ app.post('/api/openai', async (req, res) => {
     // Add structured context to the prompt
     const requestBody = provider === 'anthropic' ? {
       model: req.body.model,
-      messages: formattedMessages.map(msg => ({
-        role: msg.role === 'system' ? 'assistant' : 'user',
-        content: msg.content
-      })),
-      max_tokens: req.body.max_tokens || 4000,
-      temperature: 0.7,
-      system: "You are an expert problem-solving assistant that carefully considers all provided context including stakeholders, root causes, and impact assessments to generate unique solutions and insights."
+      messages: [{
+        role: 'user',
+        content: formattedMessages[formattedMessages.length - 1].content
+      }],
+      system: "You are an expert problem-solving assistant that carefully considers all provided context including stakeholders, root causes, and impact assessments to generate unique solutions and insights.",
+      max_tokens: 4000
     } : {
       model: req.body.model || 'gpt-4',
       messages: formattedMessages,
