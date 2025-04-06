@@ -1037,7 +1037,12 @@
                             ${reframes.map((reframe, index) => `
                                 <div class="bg-white p-4 rounded-lg border border-gray-200 fade-in" 
                                      style="animation-delay: ${index * 0.1}s">
-                                    <p>${reframe}</p>
+                                    <div class="flex justify-between items-start">
+                                        <p>${reframe}</p>
+                                        <button class="text-indigo-600 hover:text-indigo-800 generate-solutions-btn ml-3" title="Generate solutions for this reframe">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             `).join('')}
                         </div>
