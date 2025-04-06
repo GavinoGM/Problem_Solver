@@ -30,8 +30,18 @@ app.get('/api/config', (req, res) => {
 app.use(express.json());
 
 app.post('/api/openai', async (req, res) => {
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: 'OpenAI API key not configured' });
+  if (!process.env.OPENAI_API_KEY && !process.env.ANTHROPIC_API_KEY) {
+    return res.status(500).json({ error: 'No API keys configured' });
+  }
+
+  const provider = req.body.provider || 'openai';
+  const apiKey = provider === 'openai' ? process.env.OPENAI_API_KEY : process.env.ANTHROPIC_API_KEY;
+  const apiEndpoint = provider === 'openai' 
+    ? 'https://api.openai.com/v1/chat/completions'
+    : 'https://api.anthropic.com/v1/messages';
+
+  if (!apiKey) {
+    return res.status(500).json({ error: `${provider} API key not configured` });
   }
 
   try {

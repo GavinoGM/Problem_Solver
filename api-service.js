@@ -6,7 +6,12 @@ class ApiService {
         // Configuration will be loaded asynchronously
         this.config = null;
         this.configPromise = this._loadConfig();
-        this.model = 'gpt-4o'; // Default model, will be updated from config
+        this.provider = 'openai'; // Default provider
+        this.model = 'gpt-4'; // Default model
+        this.models = {
+            openai: ['gpt-4', 'gpt-3.5-turbo'],
+            anthropic: ['claude-2.1', 'claude-instant-1']
+        };
     }
 
     /**
