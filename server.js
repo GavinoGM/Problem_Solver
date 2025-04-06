@@ -118,6 +118,12 @@ app.post('/api/openai', async (req, res) => {
       }
     }
 
+    // Normalize temperature based on provider
+    const rawTemperature = parseFloat(req.body.temperature || 0.7);
+    const normalizedTemperature = provider === 'anthropic' 
+      ? Math.min(1.0, rawTemperature) // Anthropic: 0-1 range
+      : rawTemperature * 2; // OpenAI: 0-2 range
+
     const requestBody = provider === 'anthropic' ? {
       model: finalModelName,
       messages: formattedMessages.map(msg => ({
@@ -126,7 +132,7 @@ app.post('/api/openai', async (req, res) => {
       })),
       system: "You are an expert problem-solving assistant that carefully considers all provided context including stakeholders, root causes, and impact assessments to generate unique solutions and insights. Always analyze and incorporate any additional context provided in the messages.",
       max_tokens: 4000,
-      temperature: 0.7,
+      temperature: normalizedTemperature,
       stream: false
     } : {
       model: req.body.model || 'gpt-4',

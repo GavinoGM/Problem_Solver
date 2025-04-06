@@ -1,5 +1,5 @@
 /**
- * API Service for handling API calls to OpenAI
+ * API Service for handling API calls to OpenAI and Anthropic
  */
 class ApiService {
     constructor() {
@@ -163,6 +163,9 @@ class ApiService {
         let lastError = null;
         for (let attempt = 0; attempt < this.retryCount; attempt++) {
             try {
+                const temperatureSlider = document.getElementById('temperatureRange');
+                const normalizedTemperature = this._normalizeTemperature(this.model, temperatureSlider.value / 100);
+
                 const response = await fetch('/api/openai', {
                     method: 'POST',
                     headers: {
@@ -174,7 +177,7 @@ class ApiService {
                             { role: 'system', content: 'You are an expert problem-solving assistant. Analyze all provided context including stakeholders, root causes, and impact assessments to provide comprehensive, targeted solutions.' },
                             { role: 'user', content: prompt }
                         ],
-                        temperature: 0.7,
+                        temperature: normalizedTemperature,
                         max_tokens: this.model.includes('16k') ? 16000 : 4000,
                         provider: this.model.startsWith('claude') ? 'anthropic' : 'openai',
                         model_family: this.model.startsWith('claude-3') ? 'claude-3' : 
@@ -201,6 +204,15 @@ class ApiService {
             }
         }
     }
+
+    _normalizeTemperature(model, sliderValue) {
+        if (model.startsWith('claude')) {
+            return sliderValue; // Anthropic range is 0-1
+        } else {
+            return sliderValue * 2; // OpenAI range is 0-2
+        }
+    }
+
 
     /**
      * Build prompt for solution generation
