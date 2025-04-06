@@ -82,8 +82,14 @@ app.post('/api/openai', async (req, res) => {
     }
 
     // Add structured context to the prompt
+    // Format model name for Anthropic API
+    let finalModelName = modelName;
+    if (provider === 'anthropic' && modelName.includes('sonnet')) {
+      finalModelName = 'claude-3-sonnet';
+    }
+
     const requestBody = provider === 'anthropic' ? {
-      model: modelName,
+      model: finalModelName,
       messages: [{
         role: 'user',
         content: formattedMessages[formattedMessages.length - 1].content
