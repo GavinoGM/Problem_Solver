@@ -1026,10 +1026,9 @@
                         const reframeElement = generateBtn.closest('div').querySelector('p');
                         const reframedProblem = reframeElement.textContent;
 
-                        // Clear previous solutions
-                        currentSolutions = [];
-                        displayedSolutions = [];
-                        usedSolutionTitles = [];
+                        // Keep existing solutions
+                        const existingSolutions = [...currentSolutions];
+                        const existingTitles = [...usedSolutionTitles];
 
                         // Update UI to show loading
                         solutionsSection.classList.remove('hidden');
@@ -1045,9 +1044,9 @@
                             const contextText = contextCheckbox.checked ? contextInput.value.trim() : '';
                             const newSolutions = await generateAISolutions(reframedProblem, currentDomain, currentComplexity, contextText);
 
-                            // Append new solutions to existing ones
-                            currentSolutions = [...currentSolutions, ...newSolutions];
-                            usedSolutionTitles = currentSolutions.map(s => s.title);
+                            // Append new solutions while keeping existing ones
+                            currentSolutions = [...existingSolutions, ...newSolutions];
+                            usedSolutionTitles = [...existingTitles, ...newSolutions.map(s => s.title)];
                             displayedSolutions = [...currentSolutions];
 
                             // Update UI
