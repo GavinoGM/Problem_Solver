@@ -131,7 +131,7 @@ app.post('/api/openai', async (req, res) => {
     } : {
       model: req.body.model || 'gpt-4',
       messages: formattedMessages,
-      temperature: 0.9,
+      temperature: req.body.temperature || 0.7,
       presence_penalty: 0.6,
       frequency_penalty: 0.6,
       max_tokens: req.body.max_tokens || 4000

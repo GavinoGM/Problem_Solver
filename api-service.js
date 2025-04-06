@@ -174,7 +174,7 @@ class ApiService {
                             { role: 'system', content: 'You are an expert problem-solving assistant. Analyze all provided context including stakeholders, root causes, and impact assessments to provide comprehensive, targeted solutions.' },
                             { role: 'user', content: prompt }
                         ],
-                        temperature: 0.7,
+                        temperature: parseFloat(document.getElementById('temperatureRange').value) / 100,
                         max_tokens: this.model.includes('16k') ? 16000 : 4000,
                         provider: this.model.startsWith('claude') ? 'anthropic' : 'openai',
                         model_family: this.model.startsWith('claude-3') ? 'claude-3' : 
