@@ -209,11 +209,11 @@ Problem: "${problem}"
 Domain: ${domain}
 Complexity: ${complexity}/5
 ${context ? `Additional Context: ${context}` : ''}
-${stakeholders ? `\nStakeholders: ${stakeholders}` : ''}
-${rootCauses ? `\nRoot Causes: ${rootCauses}` : ''}
-${impactAssessment ? `\nImpact Assessment: ${impactAssessment}` : ''}
+${stakeholders ? `\nStakeholders Analysis:\n${stakeholders}\nConsider how each solution impacts these stakeholders.` : ''}
+${rootCauses ? `\nRoot Causes Identified:\n${rootCauses}\nEnsure solutions address these underlying causes.` : ''}
+${impactAssessment ? `\nImpact Assessment:\n${impactAssessment}\nPropose solutions that minimize negative impacts and maximize positive ones.` : ''}
 
-For each solution, provide:
+Considering ALL provided context above, for each solution provide:
 1. A title that captures the essence of the approach
 2. A one-sentence description that summarizes the solution
 3. A detailed explanation of how the solution addresses the problem (3-5 sentences)
@@ -252,11 +252,11 @@ Be creative, practical, and ensure the solutions are genuinely useful for solvin
 Problem: "${problem}"
 Domain: ${domain}
 ${context ? `Additional Context: ${context}` : ''}
-${stakeholders ? `\nStakeholders: ${stakeholders}` : ''}
-${rootCauses ? `\nRoot Causes: ${rootCauses}` : ''}
-${impactAssessment ? `\nImpact Assessment: ${impactAssessment}` : ''}
+${stakeholders ? `\nStakeholders Involved:\n${stakeholders}\nConsider their perspectives in reframing.` : ''}
+${rootCauses ? `\nUnderlying Root Causes:\n${rootCauses}\nUse these insights to challenge assumptions.` : ''}
+${impactAssessment ? `\nCurrent Impact Analysis:\n${impactAssessment}\nConsider both positive and negative implications.` : ''}
 
-Use exactly one of these approaches for each reframe (no repeating):
+Leverage ALL the context above to use exactly one of these approaches for each reframe (no repeating):
 1. Inversion/Contradiction: What if the opposite was true? What if we wanted the problem to get worse?
 2. Systems Thinking: How does this problem connect to larger systems? What feedback loops exist?
 3. Random Association: Connect this problem to a completely different domain or natural phenomenon

@@ -61,17 +61,29 @@ app.post('/api/openai', async (req, res) => {
       headers['anthropic-version'] = '2023-06-01';
     }
 
+    // Format messages differently for each provider
+    const formattedMessages = provider === 'anthropic' ? 
+      req.body.messages.map(msg => ({
+        role: msg.role === 'system' ? 'assistant' : msg.role,
+        content: msg.content
+      })) :
+      req.body.messages;
+
+    // Add structured context to the prompt
+    const requestBody = provider === 'anthropic' ? {
+      model: req.body.model,
+      messages: formattedMessages,
+      max_tokens: req.body.max_tokens,
+      temperature: 0.7
+    } : {
+      ...req.body,
+      temperature: 0.7
+    };
+
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: headers,
-      body: JSON.stringify(provider === 'anthropic' ? {
-        model: req.body.model,
-        messages: req.body.messages.map(msg => ({
-          role: msg.role === 'system' ? 'assistant' : msg.role,
-          content: msg.content
-        })),
-        max_tokens: req.body.max_tokens
-      } : req.body)
+      body: JSON.stringify(requestBody)
     });
 
     const data = await response.json();
