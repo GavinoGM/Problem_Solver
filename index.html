@@ -461,12 +461,12 @@
                     });
                 }, 100);
 
-                // Generate initial solutions
-                try {
-                    await generateInitialSolutions();
+                // Show AI reframing section
+                aiReframingSection.classList.remove('hidden');
 
-                    // Show AI reframing section
-                    aiReframingSection.classList.remove('hidden');
+                try {
+                    // Only generate reframes initially
+                    await reframeProblem();
                 } catch (error) {
                     handleApiError(error, () => {
                         // Show error message to user
@@ -624,7 +624,7 @@
                             icon: 'fas fa-atom',
                             title: 'Innovative Approach 1',
                             content: `I recommend applying first principles thinking to break down "${problem}" into its fundamental components. This would involve: 1) Identifying current assumptions, 2) Deconstructing the problem, 3) Reconstructing from the ground up.`,
-                            isAI: true
+                            isAI:true
                         },
                         {
                             icon: 'fas fa-network-wired',
