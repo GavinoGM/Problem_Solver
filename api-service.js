@@ -6,7 +6,19 @@ class ApiService {
         // Configuration will be loaded asynchronously
         this.config = null;
         this.configPromise = this._loadConfig();
-        this.model = 'gpt-4o'; // Default model, will be updated from config
+        this.model = 'gpt-4'; // Default model
+        
+        // Add model selection handler
+        document.addEventListener('DOMContentLoaded', () => {
+            const modelSelect = document.getElementById('modelSelect');
+            if (modelSelect) {
+                modelSelect.value = this.model;
+                modelSelect.addEventListener('change', (e) => {
+                    this.model = e.target.value;
+                    console.log('Model changed to:', this.model);
+                });
+            }
+        });
     }
 
     /**
