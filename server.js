@@ -76,7 +76,7 @@ app.post('/api/openai', async (req, res) => {
 
     // Add structured context to the prompt
     const requestBody = provider === 'anthropic' ? {
-      model: req.body.model,
+      model: req.body.model.replace('-20240229', ''),
       messages: [{
         role: 'user',
         content: formattedMessages[formattedMessages.length - 1].content
