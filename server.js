@@ -73,4 +73,5 @@ app.get('/', (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on http://0.0.0.0:${PORT}`);
   console.log(`OpenAI API key configured: ${!!process.env.OPENAI_API_KEY}`);
+  console.log(`Anthropic API key configured: ${!!process.env.ANTHROPIC_API_KEY}`);
 });
