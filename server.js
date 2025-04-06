@@ -52,14 +52,13 @@ app.post('/api/openai', async (req, res) => {
 
     const headers = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-      'anthropic-version': '2023-06-01'
+      'Authorization': `Bearer ${apiKey}`
     };
 
     // Add Anthropic specific headers
     if (provider === 'anthropic') {
-      headers['x-api-key'] = apiKey;
       headers['anthropic-version'] = '2023-06-01';
+      headers['x-api-key'] = apiKey;
     }
 
     // Format messages differently for each provider
@@ -84,8 +83,14 @@ app.post('/api/openai', async (req, res) => {
     // Add structured context to the prompt
     // Format model name for Anthropic API
     let finalModelName = modelName;
-    if (provider === 'anthropic' && modelName.includes('sonnet')) {
-      finalModelName = 'claude-3-sonnet';
+    if (provider === 'anthropic') {
+      if (modelName.includes('opus')) {
+        finalModelName = 'claude-3-opus-20240229'; // Keep Opus as is since it's working
+      } else if (modelName.includes('sonnet')) {
+        finalModelName = 'claude-3-sonnet-20240229';
+      } else if (modelName.includes('haiku')) {
+        finalModelName = 'claude-3-haiku-20240229';
+      }
     }
 
     const requestBody = provider === 'anthropic' ? {
