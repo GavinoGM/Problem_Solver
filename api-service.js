@@ -28,6 +28,12 @@ class ApiService {
             
             console.log('API configuration loaded:', 
                 this.config.apiKeyConfigured ? 'API Key configured ✓' : 'No API Key found ✗');
+            
+            // Update model name in UI
+            const modelNameElement = document.getElementById('aiModelName');
+            if (modelNameElement) {
+                modelNameElement.textContent = this.model || 'GPT-4';
+            }
             return this.config;
         } catch (error) {
             console.error('Error loading API configuration:', error);
