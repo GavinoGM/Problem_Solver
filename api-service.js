@@ -7,7 +7,8 @@ class ApiService {
         this.config = null;
         this.configPromise = this._loadConfig();
         this.model = 'gpt-4'; // Default model
-        
+        this.retryCount = 3; // Number of retry attempts
+
         // Add model selection handler
         document.addEventListener('DOMContentLoaded', () => {
             const modelSelect = document.getElementById('modelSelect');
@@ -32,15 +33,15 @@ class ApiService {
             if (!response.ok) {
                 throw new Error('Failed to load API configuration');
             }
-            
+
             this.config = await response.json();
             if (this.config.model) {
                 this.model = this.config.model;
             }
-            
+
             console.log('API configuration loaded:', 
                 this.config.apiKeyConfigured ? 'API Key configured ✓' : 'No API Key found ✗');
-            
+
             // Update model name in UI
             const modelNameElement = document.getElementById('aiModelName');
             if (modelNameElement) {
@@ -65,9 +66,9 @@ class ApiService {
     async generateSolutions(problem, domain, complexity, context = '') {
         // Ensure config is loaded
         await this.configPromise;
-        
+
         const prompt = this._buildSolutionPrompt(problem, domain, complexity, context);
-        
+
         try {
             const response = await this._callOpenAI(prompt);
             return this._parseSolutionsResponse(response, problem);
@@ -87,9 +88,9 @@ class ApiService {
     async reframeProblem(problem, domain, context = '') {
         // Ensure config is loaded
         await this.configPromise;
-        
+
         const prompt = this._buildReframingPrompt(problem, domain, context);
-        
+
         try {
             const response = await this._callOpenAI(prompt);
             return this._parseReframingResponse(response);
@@ -109,9 +110,9 @@ class ApiService {
     async enhanceSolution(solution, enhancementType, problem) {
         // Ensure config is loaded
         await this.configPromise;
-        
+
         const prompt = this._buildEnhancementPrompt(solution, enhancementType, problem);
-        
+
         try {
             const response = await this._callOpenAI(prompt);
             return this._formatEnhancement(response, enhancementType);
@@ -131,9 +132,9 @@ class ApiService {
     async processCustomPrompt(customPrompt, solution, problem) {
         // Ensure config is loaded
         await this.configPromise;
-        
+
         const prompt = this._buildCustomPrompt(customPrompt, solution, problem);
-        
+
         try {
             const response = await this._callOpenAI(prompt);
             return response.trim();
@@ -154,38 +155,51 @@ class ApiService {
         if (!this.config || !this.config.apiKeyConfigured) {
             throw new Error('OpenAI API key not configured. Please set it in Replit Secrets.');
         }
-        
+
         // Use server proxy to avoid CORS and hide API key
         // Log which model is being used
         console.log('Using AI model:', this.model);
-        
-        const response = await fetch('/api/openai', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: this.model,
-                messages: [
-                    { role: 'system', content: 'You are an expert problem-solving assistant. Analyze all provided context including stakeholders, root causes, and impact assessments to provide comprehensive, targeted solutions.' },
-                    { role: 'user', content: prompt }
-                ],
-                temperature: 0.7,
-                max_tokens: this.model.includes('16k') ? 16000 : 4000,
-                provider: this.model.startsWith('claude') ? 'anthropic' : 'openai',
-                model_family: this.model.startsWith('claude-3') ? 'claude-3' : 
-                            this.model.startsWith('claude') ? 'claude' : 
-                            this.model.startsWith('gpt-4') ? 'gpt-4' : 'gpt-3.5'
-            })
-        });
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
+        let lastError = null;
+        for (let attempt = 0; attempt < this.retryCount; attempt++) {
+            try {
+                const response = await fetch('/api/openai', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: this.model,
+                        messages: [
+                            { role: 'system', content: 'You are an expert problem-solving assistant. Analyze all provided context including stakeholders, root causes, and impact assessments to provide comprehensive, targeted solutions.' },
+                            { role: 'user', content: prompt }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: this.model.includes('16k') ? 16000 : 4000,
+                        provider: this.model.startsWith('claude') ? 'anthropic' : 'openai',
+                        model_family: this.model.startsWith('claude-3') ? 'claude-3' : 
+                                    this.model.startsWith('claude') ? 'claude' : 
+                                    this.model.startsWith('gpt-4') ? 'gpt-4' : 'gpt-3.5'
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
+                }
+
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error(`API call attempt ${attempt + 1} failed:`, error);
+                lastError = error;
+                if (attempt < this.retryCount) {
+                    await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+                    continue;
+                }
+                throw lastError;
+            }
         }
-
-        const data = await response.json();
-        return data.choices[0].message.content;
     }
 
     /**
@@ -202,12 +216,12 @@ class ApiService {
         const stakeholders = document.getElementById('stakeholders')?.value.trim();
         const rootCauses = document.getElementById('rootCauses')?.value.trim();
         const impactAssessment = document.getElementById('impactAssessment')?.value.trim();
-        
+
         // Add timestamp for uniqueness
         const timestamp = Date.now();
 
         return `At timestamp ${timestamp}, generate 3 completely new and innovative solutions for the following problem, heavily incorporating ALL provided context and analysis:
-        
+
 Problem: "${problem}"
 Domain: ${domain}
 Complexity: ${complexity}/5
@@ -294,7 +308,7 @@ Format response as JSON array with 3 strings, each using a different approach:
         };
 
         const prompt = enhancementPrompts[enhancementType] || 'Provide additional insights about this solution:';
-        
+
         return `${prompt}
 
 Problem: "${problem}"
@@ -336,7 +350,7 @@ Provide a helpful, concise response that directly addresses the user's request i
     _parseSolutionsResponse(response, problem) {
         try {
             let solutions;
-            
+
             // Try to parse JSON directly
             try {
                 solutions = JSON.parse(response);
@@ -349,7 +363,7 @@ Provide a helpful, concise response that directly addresses the user's request i
                     throw new Error('Could not extract JSON from response');
                 }
             }
-            
+
             // Validate and format solutions
             return solutions.map((solution, i) => ({
                 title: solution.title || `Solution ${i+1}`,
@@ -381,7 +395,7 @@ Provide a helpful, concise response that directly addresses the user's request i
     _parseReframingResponse(response) {
         try {
             let reframes;
-            
+
             // Try to parse JSON directly
             try {
                 reframes = JSON.parse(response);
@@ -394,7 +408,7 @@ Provide a helpful, concise response that directly addresses the user's request i
                     throw new Error('Could not extract JSON from response');
                 }
             }
-            
+
             return Array.isArray(reframes) ? reframes : [response];
         } catch (error) {
             console.error('Error parsing reframing response:', error);
