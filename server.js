@@ -87,9 +87,9 @@ app.post('/api/openai', async (req, res) => {
       if (modelName.includes('opus')) {
         finalModelName = 'claude-3-opus-20240229'; // Keep Opus as is since it's working
       } else if (modelName.includes('sonnet')) {
-        finalModelName = 'claude-3-sonnet'; // Use base model name
+        finalModelName = 'claude-3-7-sonnet-20250219'; // Use latest Sonnet version
       } else if (modelName.includes('haiku')) {
-        finalModelName = 'claude-3-haiku'; // Use base model name
+        finalModelName = 'claude-3-haiku-20240307'; // Use latest Haiku version
       }
     }
 
