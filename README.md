@@ -10,9 +10,9 @@ SmartSolver is a web application that uses AI to help users analyze problems, re
 This application was developed as an exploration of various superproductivity tools and AI-assisted development workflows:
 
 The initial UI concept was created using DeepSite, an innovative design tool available on Hugging Face https://enzostvs-deepsite.hf.space/
-**Code implementation and feature development were iterated through Anthropic's local coding tools integrated with Replit
+- Code implementation and feature development were iterated through Anthropic's local coding tools integrated with Replit
 
-**The creativity methods incorporated are based on established frameworks including Osborne's Applied Imagination techniques and other modern approaches
+- The creativity methods incorporated are based on established frameworks including Osborne's Applied Imagination techniques and other modern approaches
 
 This project serves as a case study in AI-augmented software development, demonstrating how these emerging tools can enhance developer productivity while creating meaningful applications to boost human creativity.
 
